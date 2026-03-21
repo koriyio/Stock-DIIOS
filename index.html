@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventario DIIO - SAG Talca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        // Aplicar modo oscuro inmediatamente para evitar parpadeos
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+        }
+    </script>
+    <style>
+        :root {
+            --sag-verde: #005b38;
+            --sag-verde-oscuro: #00452a;
+            --sag-lima: #005b38;
+            --bg-page: #F8FAFC;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --sag-blue: #0f224a;
+            --sag-red: #d2232a;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+            color: var(--text-main);
+        }
+        
+        .header {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            color: var(--sag-verde);
+            padding: 1.25rem 0;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        
+        .sag-brand {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 84px;
+            height: 44px;
+            background: linear-gradient(to right, #1D70B8 50%, #EF4444 50%);
+            color: white;
+            font-family: Arial, sans-serif;
+            font-weight: 900;
+            font-size: 26px;
+            letter-spacing: 1px;
+            text-align: center;
+            border: 2px solid #2d2d2d;
+            border-radius: 2px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sag-verde);
+            margin-bottom: 0.1rem;
+        }
+        
+        .logo .subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0;
+        }
+        
+        .nav-tabs a, .nav-tabs button {
+            padding: 0.75rem 1.25rem;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-tabs a:hover, .nav-tabs button:hover {
+            background: #F1F5F9;
+            color: var(--sag-verde);
+        }
+        
+        .nav-tabs a.active {
+            background: var(--sag-verde);
+            color: white;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 2px solid var(--sag-lima);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 150, 57, 0.25);
+        }
+        
+        .stat-card.total {
+            background: linear-gradient(135deg, var(--sag-verde) 0%, var(--sag-verde-oscuro) 100%);
+        }
+        
+        .stat-card.total .stat-value,
+        .stat-card.total .stat-label {
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--text-muted);
+        }
+        
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 1.5rem;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 1px solid var(--sag-lima);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px -5px rgba(0, 150, 57, 0.15);
+        }
+        
+        .card h2 {
+            color: var(--sag-verde);
+            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--sag-verde);
+            box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+        }
+        
+        .btn {
+            background: linear-gradient(135deg, var(--sag-verde) 0%, var(--sag-verde-oscuro) 100%);
+            color: white;
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            width: 100%;
+            font-size: 0.95rem;
+        }
+        
+        .btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 15px rgba(0, 150, 57, 0.3);
+        }
+        
+        .btn-excel {
+            background: #1D6F42;
+            margin-top: 1rem;
+        }
+        
+        .rangos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .rango-item {
+            background: #F8FAFC;
+            border-radius: 12px;
+            border: 2px solid #E2E8F0;
+            overflow: hidden;
+            transition: all 0.3s;
+        }
+        
+        .rango-item:hover {
+            border-color: var(--sag-lima);
+            box-shadow: 0 4px 12px rgba(0, 150, 57, 0.15);
+        }
+        
+        .rango-header {
+            padding: 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E9 100%);
+        }
+        
+        .rango-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .rango-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+        }
+        
+        .rango-icon.stock { background: #DCFCE7; color: #15803D; }
+        .rango-icon.vendido { background: #F1F5F9; color: #475569; }
+        .rango-icon.entregado { background: #DBEAFE; color: #1D4ED8; }
+        .rango-icon.baja { background: #FEE2E2; color: #DC2626; }
+        
+        .rango-titles h3 {
+            font-size: 1rem;
+            color: var(--text-main);
+            margin-bottom: 0.25rem;
+        }
+        
+        .rango-titles p {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+        }
+        
+        .rango-stats {
+            display: flex;
+            gap: 1.5rem;
+            text-align: center;
+        }
+        
+        .rango-stat {
+            min-width: 60px;
+        }
+        
+        .rango-stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--sag-verde);
+            display: block;
+        }
+        
+        .rango-stat-label {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        
+        .rango-body {
+            display: none;
+            padding: 1rem 1.25rem;
+            background: white;
+        }
+        
+        .rango-body.expanded {
+            display: block;
+        }
+        
+        .diio-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.5rem;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        
+        .diio-item {
+            padding: 0.5rem;
+            border-radius: 6px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .diio-item.stock { background: #DCFCE7; color: #15803D; }
+        .diio-item.vendido { background: #F1F5F9; color: #475569; }
+        .diio-item.entregado { background: #DBEAFE; color: #1D4ED8; }
+        .diio-item.baja { background: #FEE2E2; color: #DC2626; }
+        
+        .toggle-icon {
+            transition: transform 0.3s;
+        }
+        
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+        
+        .upload-area {
+            border: 2px dashed var(--sag-lima);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            cursor: pointer;
+            margin-top: 1rem;
+            background: #F1F8E9;
+        }
+        
+        .upload-area:hover {
+            background: #E8F5E9;
+        }
+        
+        .upload-area i {
+            font-size: 2rem;
+            color: var(--sag-verde);
+            margin-bottom: 0.5rem;
+        }
+        
+        #file-input { display: none; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--text-muted);
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+        
+        .badge.stock { background: #DCFCE7; color: #15803D; }
+        .badge.vendido { background: #F1F5F9; color: #475569; }
+        .badge.entregado { background: #DBEAFE; color: #1D4ED8; }
+        .badge.baja { background: #FEE2E2; color: #DC2626; }
+        
+        /* Search and Filter */
+        .filtros-container {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filtro-item {
+            flex: 1;
+            min-width: 140px;
+        }
+        .filtro-item input, .filtro-item select {
+            width: 100%;
+            padding: 0.6rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-family: 'Inter', sans-serif;
+        }
+        .filtro-item input:focus, .filtro-item select:focus {
+            outline: none;
+            border-color: var(--sag-verde);
+        }
+        
+        /* Tabs Container - Vertical */
+        .tabs-layout {
+            display: flex;
+            gap: 1.5rem;
+            align-items: flex-start;
+        }
+        
+        .tabs-sidebar {
+            width: 250px;
+            flex-shrink: 0;
+            background: #F8FAFC;
+            border: 1px solid #E2E8F0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .tabs-wrapper {
+            display: flex;
+            flex-direction: column;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+        .tabs-wrapper::-webkit-scrollbar {
+            width: 6px;
+        }
+        .tabs-wrapper::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #E2E8F0;
+            padding: 1rem;
+            cursor: pointer;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            transition: all 0.2s;
+            font-weight: 500;
+            color: var(--text-muted);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            width: 100%;
+        }
+        .tab-btn:last-child {
+            border-bottom: none;
+        }
+        .tab-btn:hover {
+            background: #F1F5F9;
+        }
+        .tab-btn.active {
+            background: white;
+            color: var(--sag-verde);
+            border-left: 4px solid var(--sag-verde);
+            font-weight: 600;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .tab-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+        .dot-stock { background: #15803D; }
+        .dot-vendido { background: #475569; }
+        .dot-entregado { background: #1D4ED8; }
+        .dot-baja { background: #DC2626; }
+        
+        .tab-count {
+            background: #E2E8F0;
+            padding: 0.1rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: var(--text-main);
+            margin-left: auto;
+        }
+        .tab-btn.active .tab-count {
+            background: #DCFCE7;
+            color: #166534;
+        }
+        
+        /* Tab Content */
+        .tabs-content-area {
+            flex: 1;
+            min-width: 0;
+        }
+        .tab-content {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            border: 1px solid #E2E8F0;
+        }
+        
+        /* Grid */
+        .diio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 0.5rem;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+        .diio-grid::-webkit-scrollbar {
+            width: 6px;
+        }
+        .diio-grid::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 4px;
+        }
+        
+        /* Premium Progress Bars */
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background-color: #E2E8F0;
+            border-radius: 3px;
+            margin-top: 0.75rem;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .stat-card.total .progress-bar-container {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* --- Dark Mode Styles --- */
+        :root[data-theme="dark"] {
+            --bg-page: #0f172a;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        [data-theme="dark"] .header,
+        [data-theme="dark"] .stat-card,
+        [data-theme="dark"] .card,
+        [data-theme="dark"] .tab-content,
+        [data-theme="dark"] .tabs-sidebar,
+        [data-theme="dark"] .rango-body {
+            background: #1e293b;
+            color: var(--text-main);
+            border-color: #334155;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
+        [data-theme="dark"] .header {
+            background: rgba(30, 41, 59, 0.85);
+            border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+        }
+
+        [data-theme="dark"] .form-group input,
+        [data-theme="dark"] .form-group select,
+        [data-theme="dark"] .filtro-item input,
+        [data-theme="dark"] .filtro-item select,
+        [data-theme="dark"] #nuevo-funcionario {
+            background: #0f172a;
+            color: var(--text-main);
+            border-color: #334155;
+        }
+
+        [data-theme="dark"] .nav-tabs a:hover, 
+        [data-theme="dark"] .nav-tabs button:hover,
+        [data-theme="dark"] .tab-btn:hover {
+            background: #334155;
+            color: var(--sag-verde);
+        }
+
+        [data-theme="dark"] .tab-btn {
+            border-bottom-color: #334155;
+        }
+
+        [data-theme="dark"] .tab-btn.active {
+            background: #0f172a;
+            color: #22c55e;
+            border-left: 4px solid var(--sag-verde);
+        }
+        
+        [data-theme="dark"] .upload-area {
+            background: #1e293b;
+            border-color: var(--sag-verde);
+        }
+
+        [data-theme="dark"] .upload-area:hover {
+            background: #334155;
+        }
+
+        [data-theme="dark"] .rango-item {
+            background: #0f172a;
+            border-color: #334155;
+        }
+
+        [data-theme="dark"] .rango-header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        }
+
+        [data-theme="dark"] .diio-item.vendido,
+        [data-theme="dark"] .badge.vendido,
+        [data-theme="dark"] .rango-icon.vendido { 
+            background: #334155; color: #cbd5e1; 
+        }
+        
+        [data-theme="dark"] .diio-item.stock,
+        [data-theme="dark"] .badge.stock,
+        [data-theme="dark"] .rango-icon.stock { 
+            background: rgba(21, 128, 61, 0.2); color: #4ade80; 
+        }
+
+        [data-theme="dark"] .diio-item.entregado,
+        [data-theme="dark"] .badge.entregado,
+        [data-theme="dark"] .rango-icon.entregado { 
+            background: rgba(29, 78, 216, 0.2); color: #60a5fa; 
+        }
+
+        [data-theme="dark"] .diio-item.baja,
+        [data-theme="dark"] .badge.baja,
+        [data-theme="dark"] .rango-icon.baja { 
+            background: rgba(220, 38, 38, 0.2); color: #f87171; 
+        }
+    </style>
+    <!-- Dependencias -->
+    <script src="api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="sag-brand">SAG</div>
+                <div>
+                    <h1>Inventario DIIO</h1>
+                    <span class="subtitle">Oficina SAG Talca</span>
+                </div>
+            </div>
+            <div class="nav-tabs">
+                <a href="#" class="active" id="btn-vista-inventario" onclick="cambiarVista('inventario'); return false;"><i class="fa-solid fa-house"></i> Inicio</a>
+                <a href="#" id="btn-vista-reportes" onclick="cambiarVista('reportes'); return false;"><i class="fa-solid fa-chart-pie"></i> Reportes</a>
+                <a href="listado-completo.html" style="display: none;"><i class="fa-solid fa-list"></i> Listado Completo</a>
+                <a href="consolidar.html" style="display: none;"><i class="fa-solid fa-object-group"></i> Consolidar</a>
+                <button onclick="toggleTheme()" id="btn-theme" title="Modo Oscuro/Claro" style="margin-left: 1rem; padding: 0.5rem 0.75rem; border: 1px solid #E2E8F0;"><i class="fa-solid fa-moon"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <main class="container" id="vista-inventario">
+        <!-- Barra de estadísticas -->
+        <div class="stats-bar">
+            <div class="stat-card total">
+                <span class="stat-value" id="total-general">0</span>
+                <span class="stat-label">Total DIIOs</span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" style="width: 100%; background-color: #ffffff;"></div></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #15803D;" id="total-stock">0</span>
+                <span class="stat-label">En Stock <span id="pct-stock" style="font-size:0.7rem; color: #15803D; font-weight: bold;">(0%)</span></span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" id="bar-stock" style="width: 0%; background-color: #15803D;"></div></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #1D4ED8;" id="total-entregado">0</span>
+                <span class="stat-label">Entregados <span id="pct-entregado" style="font-size:0.7rem; color: #1D4ED8; font-weight: bold;">(0%)</span></span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" id="bar-entregado" style="width: 0%; background-color: #1D4ED8;"></div></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #475569;" id="total-vendido">0</span>
+                <span class="stat-label">Vendidos <span id="pct-vendido" style="font-size:0.7rem; color: #475569; font-weight: bold;">(0%)</span></span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" id="bar-vendido" style="width: 0%; background-color: #475569;"></div></div>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #DC2626;" id="total-baja">0</span>
+                <span class="stat-label">De Baja <span id="pct-baja" style="font-size:0.7rem; color: #DC2626; font-weight: bold;">(0%)</span></span>
+                <div class="progress-bar-container"><div class="progress-bar-fill" id="bar-baja" style="width: 0%; background-color: #DC2626;"></div></div>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Panel Izquierdo: Formulario -->
+            <div>
+                <div class="card">
+                    <h2><i class="fa-solid fa-plus-circle"></i> Agregar Nuevo Rango</h2>
+                    
+                    <form id="rango-form">
+                        <div class="form-group">
+                            <label>DIIO Inicial</label>
+                            <input type="number" id="rango-inicio" required placeholder="Ej: 24245101">
+                        </div>
+                        <div class="form-group">
+                            <label>DIIO Final</label>
+                            <input type="number" id="rango-fin" required placeholder="Ej: 24245400">
+                        </div>
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select id="rango-estado" required onchange="toggleFuncionarioSelect(this.value, 'fg-funcionario')">
+                                <option value="stock">En Stock</option>
+                                <option value="vendido">Vendido</option>
+                                <option value="entregado">Entregado</option>
+                                <option value="baja">De Baja</option>
+                            </select>
+                        </div>
+                        <div class="form-group hidden" id="fg-funcionario">
+                            <label>Funcionario Responsable</label>
+                            <select id="rango-funcionario">
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Proveedor / Origen</label>
+                            <input type="text" id="rango-proveedor" placeholder="Ej: SAG Nacional">
+                        </div>
+                        <div class="form-group">
+                            <label>Fecha</label>
+                            <input type="date" id="rango-fecha" required>
+                        </div>
+                        <button type="submit" class="btn">
+                            <i class="fa-solid fa-floppy-disk"></i> Guardar Rango
+                        </button>
+                    </form>
+
+                    <div style="display: none;">
+                        <div class="upload-area" onclick="document.getElementById('file-input').click()">
+                            <i class="fa-solid fa-file-excel"></i>
+                            <p><strong>Cargar desde Excel</strong></p>
+                            <p style="font-size: 0.8rem; color: #94A3B8;">DetalleRangoDIIO.xlsx</p>
+                        </div>
+                        <input type="file" id="file-input" accept=".xlsx, .xls" onchange="cargarExcel(event)">
+                        <button class="btn btn-excel" onclick="window.location.href='carga-masiva.html'">
+                            <i class="fa-solid fa-upload"></i> Carga Masiva desde Excel
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h2><i class="fa-solid fa-user-tie"></i> Gestión de Funcionarios</h2>
+                    <form id="funcionario-form" style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                        <input type="text" id="nuevo-funcionario" placeholder="Nombre del Funcionario" required style="flex: 1; min-width: 150px; padding: 0.6rem; border: 2px solid #E2E8F0; border-radius: 8px; font-family: 'Inter', sans-serif;">
+                        <button type="submit" class="btn" style="width: auto; padding: 0.6rem 1rem;">
+                            <i class="fa-solid fa-plus"></i> Agregar
+                        </button>
+                    </form>
+                    <div id="lista-funcionarios" style="margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                        <!-- Se llena dinámicamente -->
+                    </div>
+                </div>
+                
+                <div class="card" style="margin-top: 1.5rem;">
+                    <h2><i class="fa-solid fa-clock-rotate-left"></i> Actividad Reciente</h2>
+                    <div id="lista-historial" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 250px; overflow-y: auto; padding-right: 0.5rem;">
+                        <span style="font-size: 0.8rem; color: #94A3B8;">No hay actividad reciente.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Panel Derecho: Lista de Rangos -->
+            <div class="card" style="display: flex; flex-direction: column;">
+                <h2><i class="fa-solid fa-folder-open"></i> Rangos Registrados</h2>
+                
+                <div class="filtros-container">
+                    <div class="filtro-item">
+                        <label for="buscar-diio" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Buscar DIIO</label>
+                        <input type="number" id="buscar-diio" placeholder="Ej: 24245101" oninput="filtrarYRenderizar()">
+                    </div>
+                    <div class="filtro-item" style="display: none;">
+                        <label for="buscar-proveedor" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Buscar Proveedor</label>
+                        <input type="text" id="buscar-proveedor" placeholder="Ej: SAG" oninput="filtrarYRenderizar()">
+                    </div>
+                    <div class="filtro-item">
+                        <label for="buscar-estado" style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Filtrar por Estado</label>
+                        <select id="buscar-estado" onchange="filtrarYRenderizar()">
+                            <option value="">Todos los estados</option>
+                            <option value="stock">En Stock</option>
+                            <option value="vendido">Vendidos</option>
+                            <option value="entregado">Entregados</option>
+                            <option value="baja">De Baja</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="tabs-layout" id="tabs-layout-container">
+                    <div class="tabs-sidebar">
+                        <div class="tabs-wrapper" id="tabs-container">
+                            <!-- Tabs go here -->
+                        </div>
+                    </div>
+                    
+                    <div class="tabs-content-area">
+                        <div class="tab-content" id="tab-content">
+                            <!-- Grid goes here -->
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="empty-state hidden" id="empty-state">
+                    <i class="fa-solid fa-inbox"></i>
+                    <p>No hay rangos registrados o que coincidan con los filtros</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Vista de Reportes -->
+    <main class="container" id="vista-reportes" style="display: none;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+            <h2 style="color: var(--sag-verde); font-size: 1.5rem; margin: 0;"><i class="fa-solid fa-chart-pie"></i> Panel de Reportes</h2>
+            <button class="btn" style="width: auto; background: linear-gradient(135deg, #009639 0%, #007A2E 100%); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.5rem;" onclick="descargarReporteExcel()">
+                <i class="fa-solid fa-file-excel"></i> Descargar Reporte (Excel)
+            </button>
+        </div>
+        <div class="stats-bar" style="margin-bottom: 2rem;">
+            <div class="stat-card" style="box-shadow: none; border-color: #E2E8F0; grid-column: span 2;">
+                <h3 style="color: var(--sag-verde); font-size: 1.1rem; margin-bottom: 1rem;"><i class="fa-solid fa-chart-pie"></i> Distribución por Estado</h3>
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="chart-estados"></canvas>
+                </div>
+            </div>
+            <div class="stat-card" style="box-shadow: none; border-color: #E2E8F0; grid-column: span 3;">
+                <h3 style="color: var(--sag-verde); font-size: 1.1rem; margin-bottom: 1rem;"><i class="fa-solid fa-building"></i> Top Orígenes/Proveedores</h3>
+                <div style="position: relative; height: 300px; width: 100%;">
+                    <canvas id="chart-proveedores"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h3 style="color: var(--sag-verde); font-size: 1.1rem; margin-bottom: 1rem;"><i class="fa-solid fa-user-tie"></i> Distribución DIIOs Entregados por Funcionario</h3>
+            <div style="position: relative; height: 400px; width: 100%;">
+                <canvas id="chart-funcionarios"></canvas>
+            </div>
+        </div>
+    </main>
+
+    <footer style="text-align: center; padding: 2rem; color: var(--text-muted); font-size: 0.85rem; border-top: 1px solid #E2E8F0; margin-top: 2rem;">
+        Desarrollado por Rodrigo Alexis Aburto Pereira (Técnico de Nivel Superior en Informática) | Versión 1.0
+    </footer>
+
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script>
+        let rangos = [];
+        let rangosFiltrados = [];
+        let tabActivaIndex = 0;
+        let funcionarios = [];
+        let historial = [];
+        let paginaGrid = 1;
+        const ITEMS_POR_PAGINA_GRID = 200;
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', async () => {
+            document.getElementById('rango-fecha').valueAsDate = new Date();
+            await cargarFuncionarios();
+            await cargarRangos();
+            await cargarHistorial();
+        });
+
+        // --- Lógica del Historial ---
+        async function cargarHistorial() {
+            historial = await window.api.getHistorial();
+            renderizarHistorial();
+        }
+
+        async function registrarHistorial(accion, detalle, icono) {
+            const fecha = new Date();
+            const hora = fecha.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+            const fechaStr = fecha.toLocaleDateString();
+            historial.unshift({ accion, detalle, icono, fecha: fechaStr, hora });
+            
+            if (historial.length > 50) historial.pop(); // Mantener solo los últimos 50 registros
+            
+            await window.api.saveHistorial(historial);
+            renderizarHistorial();
+        }
+
+        function renderizarHistorial() {
+            const contenedor = document.getElementById('lista-historial');
+            if (!contenedor) return;
+            if (historial.length === 0) {
+                contenedor.innerHTML = '<span style="font-size: 0.8rem; color: #94A3B8;">No hay actividad reciente.</span>';
+                return;
+            }
+            
+            contenedor.innerHTML = historial.map(h => `
+                <div style="background: #F8FAFC; padding: 0.75rem; border-radius: 8px; border-left: 3px solid var(--sag-verde); font-size: 0.85rem;">
+                    <strong style="color: var(--sag-verde-oscuro); display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="${h.icono || 'fa-solid fa-check'}"></i> ${h.accion}
+                    </strong>
+                    <div style="color: var(--text-muted); margin-top: 0.25rem;">${h.detalle}</div>
+                    <div style="color: #94A3B8; font-size: 0.75rem; margin-top: 0.25rem; text-align: right;">
+                        ${h.fecha} ${h.hora}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function cargarFuncionarios() {
+            funcionarios = await window.api.getFuncionarios();
+            renderizarListaFuncionarios();
+            renderizarSelectFuncionarios();
+        }
+
+        // Cargar rangos desde API
+        async function cargarRangos() {
+            try {
+                let item = await window.api.getRangos();
+                if (item && Array.isArray(item)) {
+                    rangos = item;
+                } else {
+                    rangos = [];
+                }
+                rangos = rangos.map(r => ({...r, inicio: parseInt(r.inicio), fin: parseInt(r.fin)}));
+            } catch (e) {
+                console.error('Error al cargar rangos:', e);
+                rangos = [];
+            }
+            filtrarYRenderizar();
+            actualizarTotales();
+        }
+
+        // Guardar rangos en API
+        async function guardarRangos() {
+            await window.api.saveRangos(rangos);
+            filtrarYRenderizar();
+            actualizarTotales();
+        }
+
+        // Lógicas de funcionarios
+        function toggleFuncionarioSelect(estado, containerId) {
+            const container = document.getElementById(containerId);
+            if (!container) return;
+            if (estado === 'entregado') {
+                container.classList.remove('hidden');
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        function renderizarListaFuncionarios() {
+            const contenedor = document.getElementById('lista-funcionarios');
+            if (!contenedor) return;
+            if (funcionarios.length === 0) {
+                contenedor.innerHTML = '<span style="font-size: 0.8rem; color: #94A3B8;">No hay funcionarios registrados.</span>';
+                return;
+            }
+            
+            contenedor.innerHTML = funcionarios.map((f, i) => `
+                <div style="background: #E2E8F0; color: #334155; padding: 0.3rem 0.6rem; border-radius: 16px; font-size: 0.8rem; display: flex; align-items: center; gap: 0.4rem;">
+                    <i class="fa-solid fa-user"></i> ${escapeHTML(f)}
+                    <i class="fa-solid fa-xmark" style="cursor: pointer; color: #EF4444;" onclick="eliminarFuncionario(${i})" title="Eliminar funcionario"></i>
+                </div>
+            `).join('');
+        }
+
+        function renderizarSelectFuncionarios() {
+            const optionsHtml = funcionarios.length 
+                ? funcionarios.map(f => `<option value="${escapeHTML(f)}">${escapeHTML(f)}</option>`).join('')
+                : '<option value="">(Sin funcionarios cargados)</option>';
+                
+            const selects = [document.getElementById('rango-funcionario'), document.getElementById('cambio-funcionario')];
+            selects.forEach(select => {
+                if(select) {
+                    const currentVal = select.value;
+                    select.innerHTML = optionsHtml;
+                    if(currentVal && funcionarios.includes(currentVal)) {
+                        select.value = currentVal;
+                    }
+                }
+            });
+        }
+
+        document.getElementById('funcionario-form')?.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const nombre = document.getElementById('nuevo-funcionario').value.trim();
+            if (nombre && !funcionarios.includes(nombre)) {
+                funcionarios.push(nombre);
+                await window.api.saveFuncionarios(funcionarios);
+                renderizarListaFuncionarios();
+                renderizarSelectFuncionarios();
+                e.target.reset();
+            } else if (funcionarios.includes(nombre)) {
+                alert('El funcionario ya existe');
+            }
+        });
+
+        async function eliminarFuncionario(index) {
+            if (confirm(`¿Estás seguro de eliminar a ${funcionarios[index]}?`)) {
+                funcionarios.splice(index, 1);
+                await window.api.saveFuncionarios(funcionarios);
+                renderizarListaFuncionarios();
+                renderizarSelectFuncionarios();
+            }
+        }
+
+        function filtrarYRenderizar() {
+            const fDiio = document.getElementById('buscar-diio').value;
+            const fProv = document.getElementById('buscar-proveedor').value.toLowerCase();
+            const fEst = document.getElementById('buscar-estado').value;
+
+            rangosFiltrados = [...rangos].sort((a, b) => a.inicio - b.inicio);
+
+            if (fDiio) {
+                const num = parseInt(fDiio);
+                rangosFiltrados = rangosFiltrados.filter(r => num >= r.inicio && num <= r.fin);
+            }
+            if (fProv) {
+                rangosFiltrados = rangosFiltrados.filter(r => (r.proveedor || '').toLowerCase().includes(fProv));
+            }
+            if (fEst) {
+                rangosFiltrados = rangosFiltrados.filter(r => r.estado === fEst);
+            }
+
+            tabActivaIndex = 0;
+            renderizarTabs();
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function renderizarTabs() {
+            const tabsContainer = document.getElementById('tabs-container');
+            const emptyState = document.getElementById('empty-state');
+            const contentContainer = document.getElementById('tab-content');
+            const layoutContainer = document.getElementById('tabs-layout-container');
+
+            if (rangosFiltrados.length === 0) {
+                tabsContainer.innerHTML = '';
+                contentContainer.innerHTML = '';
+                layoutContainer.classList.add('hidden');
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            layoutContainer.classList.remove('hidden');
+
+            tabsContainer.innerHTML = rangosFiltrados.map((r, i) => `
+                <button class="tab-btn ${i === tabActivaIndex ? 'active' : ''}" onclick="seleccionarTab(${i})">
+                    <span class="tab-dot dot-${r.estado}"></span>
+                    ${r.inicio} - ${r.fin}
+                    <span class="tab-count">${r.fin - r.inicio + 1}</span>
+                </button>
+            `).join('');
+
+            renderizarTabContent();
+        }
+
+        function seleccionarTab(index) {
+            tabActivaIndex = index;
+            const tabsContainer = document.getElementById('tabs-container');
+            Array.from(tabsContainer.children).forEach((btn, i) => {
+                if(i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            renderizarTabContent();
+        }
+
+        function renderizarTabContent() {
+            const contentContainer = document.getElementById('tab-content');
+            if (rangosFiltrados.length === 0) return;
+            
+            const rango = rangosFiltrados[tabActivaIndex];
+            
+            const estadoNombres = {
+                'stock': 'En Stock',
+                'vendido': 'Vendido',
+                'entregado': 'Entregado',
+                'baja': 'De Baja'
+            };
+
+            contentContainer.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                    <h3 style="color: var(--sag-verde); font-size: 1.1rem; font-weight: 700;">Rango: ${rango.inicio} - ${rango.fin}</h3>
+                    <span class="badge ${rango.estado}">${estadoNombres[rango.estado]}</span>
+                </div>
+                
+                <div style="background: #F8FAFC; padding: 1rem; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1rem; display: flex; gap: 2rem;">
+                    <div><span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Proveedor/Origen</span><strong><i class="fa-solid fa-building"></i> ${escapeHTML(rango.proveedor || 'SAG')}</strong></div>
+                    <div><span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Fecha Registro</span><strong><i class="fa-solid fa-calendar"></i> ${escapeHTML(rango.fecha || '-')}</strong></div>
+                    ${rango.estado === 'entregado' && rango.funcionario ? `<div><span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Funcionario</span><strong><i class="fa-solid fa-user-tie"></i> ${escapeHTML(rango.funcionario)}</strong></div>` : ''}
+                    <div><span style="color: var(--text-muted); font-size: 0.8rem; display: block;">Total DIIOs</span><strong><i class="fa-solid fa-tags"></i> ${rango.fin - rango.inicio + 1}</strong></div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted); padding-top: 1rem; border-top: 1px solid #E2E8F0;">Modificar Estado de DIIOs en este rango</h4>
+                <div style="background: #F8FAFC; padding: 1.5rem; border-radius: 8px; border: 1px solid #E2E8F0; margin-bottom: 1.5rem;">
+                    <div style="display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Desde DIIO</label>
+                            <input type="number" id="cambio-desde" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #CBD5E1; font-family: 'Inter', sans-serif;" value="${rango.inicio}" min="${rango.inicio}" max="${rango.fin}">
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Hasta DIIO</label>
+                            <input type="number" id="cambio-hasta" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #CBD5E1; font-family: 'Inter', sans-serif;" value="${rango.fin}" min="${rango.inicio}" max="${rango.fin}">
+                        </div>
+                        <div style="flex: 1; min-width: 120px;">
+                            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Nuevo Estado</label>
+                            <select id="cambio-estado" onchange="toggleFuncionarioSelect(this.value, 'cambio-fg-funcionario')" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #CBD5E1; font-family: 'Inter', sans-serif; height: 35px; outline: none;">
+                                <option value="stock" ${rango.estado === 'stock' ? 'selected' : ''}>En Stock</option>
+                                <option value="vendido" ${rango.estado === 'vendido' ? 'selected' : ''}>Vendido</option>
+                                <option value="entregado" ${rango.estado === 'entregado' ? 'selected' : ''}>Entregado</option>
+                                <option value="baja" ${rango.estado === 'baja' ? 'selected' : ''}>De Baja</option>
+                            </select>
+                        </div>
+                        <div style="flex: 1; min-width: 120px;" class="${rango.estado !== 'entregado' ? 'hidden' : ''}" id="cambio-fg-funcionario">
+                            <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.25rem;">Funcionario</label>
+                            <select id="cambio-funcionario" style="width: 100%; padding: 0.5rem; border-radius: 6px; border: 1px solid #CBD5E1; font-family: 'Inter', sans-serif; height: 35px; outline: none;">
+                                <!-- Se llena dinámicamente -->
+                            </select>
+                        </div>
+                        <button onclick="aplicarCambioEstado(${rango.inicio}, ${rango.fin})" style="background: var(--sag-verde); color: white; border: none; padding: 0.5rem 1rem; border-radius: 6px; cursor: pointer; font-weight: 600; min-width: 120px; transition: 0.2s; height: 35px;">
+                            <i class="fa-solid fa-arrows-rotate"></i> Actualizar
+                        </button>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 1rem; font-size: 0.95rem; color: var(--text-muted);">Listado de DIIOs</h4>
+                <div class="diio-grid">
+                    ${generarGridDIIOs(rango)}
+                </div>
+            `;
+            
+            renderizarSelectFuncionarios();
+            
+            // Setear el funcionario activo si el estado era entregado
+            if (rango.estado === 'entregado' && rango.funcionario) {
+                const select = document.getElementById('cambio-funcionario');
+                if (select) select.value = rango.funcionario;
+            }
+        }
+
+        function aplicarCambioEstado(rangoInicio, rangoFin) {
+            const desde = parseInt(document.getElementById('cambio-desde').value);
+            const hasta = parseInt(document.getElementById('cambio-hasta').value);
+            const nuevoEstado = document.getElementById('cambio-estado').value;
+            const funcionarioSeleccionado = document.getElementById('cambio-funcionario').value;
+
+            if (nuevoEstado === 'entregado' && !funcionarioSeleccionado && funcionarios.length > 0) {
+                alert('Debe seleccionar un funcionario al cambiar el estado a Entregado.');
+                return;
+            }
+
+            if (isNaN(desde) || isNaN(hasta) || desde < rangoInicio || hasta > rangoFin || desde > hasta) {
+                alert('Por favor ingrese números de DIIO válidos que estén dentro del rango actual.');
+                return;
+            }
+
+            const indiceRango = rangos.findIndex(r => r.inicio === rangoInicio && r.fin === rangoFin);
+            if (indiceRango === -1) return;
+
+            const rangoOriginal = rangos[indiceRango];
+
+            if (rangoOriginal.estado === nuevoEstado && (nuevoEstado !== 'entregado' || rangoOriginal.funcionario === funcionarioSeleccionado)) {
+                alert('No hay cambios para actualizar.');
+                return;
+            }
+
+            let nuevosRangos = [];
+
+            // Segmento inicial intacto
+            if (desde > rangoOriginal.inicio) {
+                nuevosRangos.push({
+                    ...rangoOriginal,
+                    id: crypto.randomUUID(),
+                    fin: desde - 1
+                });
+            }
+
+            // Segmento modificado
+            nuevosRangos.push({
+                ...rangoOriginal,
+                id: crypto.randomUUID(),
+                inicio: desde,
+                fin: hasta,
+                estado: nuevoEstado,
+                funcionario: nuevoEstado === 'entregado' ? funcionarioSeleccionado : null
+            });
+
+            // Segmento final intacto
+            if (hasta < rangoOriginal.fin) {
+                nuevosRangos.push({
+                    ...rangoOriginal,
+                    id: crypto.randomUUID(),
+                    inicio: hasta + 1
+                });
+            }
+
+            // Reemplazar el rango original con los nuevos rangos divididos
+            rangos.splice(indiceRango, 1, ...nuevosRangos);
+            
+            // Unir rangos adyacentes si comparten propiedades y estados (Opcional, pero recomendado)
+            unificarRangos();
+
+            guardarRangos();
+            const nombreEstado = { 'stock': 'En Stock', 'vendido': 'Vendido', 'entregado': 'Entregado', 'baja': 'De Baja' };
+            registrarHistorial('Estado Actualizado', `Se pasó los DIIOs de ${desde} a ${hasta} a ${nombreEstado[nuevoEstado] || nuevoEstado}${nuevoEstado === 'entregado' ? ' ('+funcionarioSeleccionado+')' : ''}`, 'fa-solid fa-arrows-rotate');
+            alert('Estados de los DIIOs actualizados correctamente.');
+        }
+
+        function unificarRangos() {
+            rangos.sort((a, b) => a.inicio - b.inicio);
+            for (let i = 0; i < rangos.length - 1; i++) {
+                let actual = rangos[i];
+                let siguiente = rangos[i + 1];
+
+                if (actual.estado === siguiente.estado && 
+                    actual.proveedor === siguiente.proveedor && 
+                    actual.funcionario === siguiente.funcionario &&
+                    actual.fin + 1 === siguiente.inicio) {
+                    
+                    actual.fin = siguiente.fin;
+                    rangos.splice(i + 1, 1);
+                    i--; // Volver a chequear este mismo índice con el próximo elemento
+                }
+            }
+        }
+
+        function generarGridDIIOs(rango) {
+            const total = rango.fin - rango.inicio + 1;
+            const mostrar = Math.min(500, total);
+            let html = '';
+            
+            for (let i = 0; i < mostrar; i++) {
+                html += `<div class="diio-item ${rango.estado}">${rango.inicio + i}</div>`;
+            }
+            
+            if (total > 500) {
+                html += `<div class="diio-item" style="background: #E2E8F0; color: #64748B; cursor: help;" title="El rango contiene más DIIOs. Mostrando los primeros 500.">+${total - 500} más</div>`;
+            }
+            
+            return html;
+        }
+
+        function actualizarTotales() {
+            let total = 0, stock = 0, entregado = 0, vendido = 0, baja = 0;
+
+            rangos.forEach(rango => {
+                const cantidad = rango.fin - rango.inicio + 1;
+                total += cantidad;
+                
+                if (rango.estado === 'stock') stock += cantidad;
+                else if (rango.estado === 'entregado') entregado += cantidad;
+                else if (rango.estado === 'vendido') vendido += cantidad;
+                else if (rango.estado === 'baja') baja += cantidad;
+            });
+
+            document.getElementById('total-general').textContent = total.toLocaleString();
+            document.getElementById('total-stock').textContent = stock.toLocaleString();
+            document.getElementById('total-entregado').textContent = entregado.toLocaleString();
+            document.getElementById('total-vendido').textContent = vendido.toLocaleString();
+            document.getElementById('total-baja').textContent = baja.toLocaleString();
+
+            const calcPct = (val) => total > 0 ? ((val / total) * 100).toFixed(1) : 0;
+            
+            const pStock = calcPct(stock);
+            const pEntregado = calcPct(entregado);
+            const pVendido = calcPct(vendido);
+            const pBaja = calcPct(baja);
+
+            const pctStockEl = document.getElementById('pct-stock'); if (pctStockEl) pctStockEl.textContent = `(${pStock}%)`;
+            const pctEntregadoEl = document.getElementById('pct-entregado'); if (pctEntregadoEl) pctEntregadoEl.textContent = `(${pEntregado}%)`;
+            const pctVendidoEl = document.getElementById('pct-vendido'); if (pctVendidoEl) pctVendidoEl.textContent = `(${pVendido}%)`;
+            const pctBajaEl = document.getElementById('pct-baja'); if (pctBajaEl) pctBajaEl.textContent = `(${pBaja}%)`;
+
+            setTimeout(() => {
+                const barStock = document.getElementById('bar-stock'); if (barStock) barStock.style.width = pStock + '%';
+                const barEntregado = document.getElementById('bar-entregado'); if (barEntregado) barEntregado.style.width = pEntregado + '%';
+                const barVendido = document.getElementById('bar-vendido'); if (barVendido) barVendido.style.width = pVendido + '%';
+                const barBaja = document.getElementById('bar-baja'); if (barBaja) barBaja.style.width = pBaja + '%';
+            }, 50);
+        }
+
+        // Agregar rango manual
+        document.getElementById('rango-form').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const inicio = parseInt(document.getElementById('rango-inicio').value);
+            const fin = parseInt(document.getElementById('rango-fin').value);
+            const estado = document.getElementById('rango-estado').value;
+            const funcionario = document.getElementById('rango-funcionario').value;
+            const proveedor = document.getElementById('rango-proveedor').value || 'SAG Nacional';
+            const fecha = document.getElementById('rango-fecha').value;
+
+            if (fin < inicio) {
+                alert('El DIIO Final debe ser mayor o igual al DIIO Inicial');
+                return;
+            }
+
+            if (estado === 'entregado' && !funcionario && funcionarios.length > 0) {
+                alert('Debe asignar un funcionario cuando el estado es Entregado');
+                return;
+            }
+
+            // Verificar solapamiento
+            const solapa = rangos.some(r => 
+                (inicio >= r.inicio && inicio <= r.fin) ||
+                (fin >= r.inicio && fin <= r.fin) ||
+                (inicio <= r.inicio && fin >= r.fin)
+            );
+
+            if (solapa) {
+                alert('Este rango se solapa con un rango existente');
+                return;
+            }
+
+            rangos.push({
+                id: crypto.randomUUID(),
+                inicio,
+                fin,
+                estado,
+                funcionario: estado === 'entregado' ? funcionario : null,
+                proveedor,
+                fecha
+            });
+
+            guardarRangos();
+            
+            const nombreEstado = { 'stock': 'En Stock', 'vendido': 'Vendido', 'entregado': 'Entregado', 'baja': 'De Baja' };
+            registrarHistorial('Nuevo Rango Agregado', `DIIOs: ${inicio} al ${fin} como ${nombreEstado[estado] || estado}`, 'fa-solid fa-plus-circle');
+            
+            // Limpiar formulario
+            e.target.reset();
+            document.getElementById('rango-fecha').valueAsDate = new Date();
+            
+            alert(`Rango ${inicio} - ${fin} agregado (${fin - inicio + 1} DIIOs)`);
+        });
+
+        // Cargar Excel
+        async function cargarExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            try {
+                const data = await file.arrayBuffer();
+                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+
+                let cargados = 0;
+
+                for (const nombreHoja of workbook.SheetNames) {
+                    const worksheet = workbook.Sheets[nombreHoja];
+                    const datos = XLSX.utils.sheet_to_json(worksheet);
+
+                    // Agrupar por rangos contiguos del mismo estado
+                    const rangosDelExcel = agruparPorRangos(datos);
+                    
+                    rangosDelExcel.forEach(rango => {
+                        // Verificar que no exista
+                        const existe = rangos.some(r => 
+                            rango.inicio === r.inicio && rango.fin === r.fin
+                        );
+                        
+                        if (!existe) {
+                            rangos.push(rango);
+                            cargados++;
+                        }
+                    });
+                }
+
+                guardarRangos();
+                registrarHistorial('Carga Masiva (Excel)', `Se registraron ${cargados} rangos desde el archivo Excel.`, 'fa-solid fa-file-excel');
+                alert(`Se cargaron ${cargados} rangos del Excel`);
+                event.target.value = '';
+            } catch (error) {
+                alert('Error al cargar Excel: ' + error.message);
+                console.error(error);
+            }
+        }
+
+        // Agrupar datos del Excel por rangos
+        function agruparPorRangos(datos) {
+            if (datos.length === 0) return [];
+
+            // Ordenar por NUMERO_DIIO
+            const ordenados = datos.sort((a, b) => {
+                const aNum = a.NUMERO_DIIO || a['NUMERO DIIO'] || a.numero_diio || 0;
+                const bNum = b.NUMERO_DIIO || b['NUMERO DIIO'] || b.numero_diio || 0;
+                return parseInt(aNum) - parseInt(bNum);
+            });
+
+            const rangos = [];
+            let rangoActual = null;
+
+            for (const item of ordenados) {
+                const numero = parseInt(item.NUMERO_DIIO || item['NUMERO DIIO'] || item.numero_diio);
+                const estadoRaw = item.ESTADO || item.estado || '';
+                const estado = normalizarEstado(estadoRaw);
+                const responsable = item.RESPONSABLE || item.responsable || item.proveedor || 'SAG Nacional';
+                const funcionarioItem = item.FUNCIONARIO || item.funcionario || item.Funcionario || null;
+                
+                let fecha = item.FECHA || item.fecha;
+                if (fecha instanceof Date) {
+                    fecha = fecha.toISOString().split('T')[0];
+                } else if (!fecha) {
+                    fecha = new Date().toISOString().split('T')[0];
+                }
+
+                if (!rangoActual) {
+                    rangoActual = {
+                        id: crypto.randomUUID(),
+                        inicio: numero,
+                        fin: numero,
+                        estado: estado,
+                        proveedor: responsable,
+                        funcionario: estado === 'entregado' ? funcionarioItem : null,
+                        fecha: fecha
+                    };
+                } else if (
+                    numero === rangoActual.fin + 1 &&
+                    estado === rangoActual.estado &&
+                    responsable === rangoActual.proveedor &&
+                    rangoActual.funcionario === (estado === 'entregado' ? funcionarioItem : null)
+                ) {
+                    rangoActual.fin = numero;
+                } else {
+                    rangos.push(rangoActual);
+                    rangoActual = {
+                        id: crypto.randomUUID(),
+                        inicio: numero,
+                        fin: numero,
+                        estado: estado,
+                        funcionario: estado === 'entregado' ? funcionarioItem : null,
+                        proveedor: responsable,
+                        fecha: fecha
+                    };
+                }
+            }
+
+            if (rangoActual) {
+                rangos.push(rangoActual);
+            }
+
+            return rangos;
+        }
+
+        function normalizarEstado(estado) {
+            if (!estado) return 'stock';
+            const e = estado.toLowerCase().trim();
+            if (e.includes('stock')) return 'stock';
+            if (e.includes('entreg')) return 'entregado';
+            if (e.includes('vend')) return 'vendido';
+            if (e.includes('baja') || e.includes('elim')) return 'baja';
+            return 'stock';
+        }
+
+        // --- Lógica de Reportes ---
+        let chartEstados = null;
+        let chartProveedores = null;
+        let chartFuncionarios = null;
+
+        function cambiarVista(vista) {
+            const vistaInventario = document.getElementById('vista-inventario');
+            const vistaReportes = document.getElementById('vista-reportes');
+            const btnInventario = document.getElementById('btn-vista-inventario');
+            const btnReportes = document.getElementById('btn-vista-reportes');
+
+            if (vista === 'inventario') {
+                vistaInventario.style.display = 'block';
+                vistaReportes.style.display = 'none';
+                btnInventario.classList.add('active');
+                btnReportes.classList.remove('active');
+            } else if (vista === 'reportes') {
+                vistaInventario.style.display = 'none';
+                vistaReportes.style.display = 'block';
+                btnInventario.classList.remove('active');
+                btnReportes.classList.add('active');
+                renderizarReportes();
+            }
+        }
+
+        function procesarDatosReportes() {
+            const statsEstados = { 'stock': 0, 'vendido': 0, 'entregado': 0, 'baja': 0 };
+            const statsProveedores = {};
+            const statsFuncionarios = {};
+
+            const normalizeName = (name) => {
+                if (!name) return '';
+                return name.trim().toUpperCase();
+            };
+
+            rangos.forEach(r => {
+                const total = r.fin - r.inicio + 1;
+                
+                // Estados
+                if (statsEstados[r.estado] !== undefined) {
+                    statsEstados[r.estado] += total;
+                }
+
+                // Proveedores
+                const prov = r.proveedor ? normalizeName(r.proveedor) : 'SIN ORIGEN';
+                statsProveedores[prov] = (statsProveedores[prov] || 0) + total;
+
+                // Funcionarios
+                if (r.estado === 'entregado' && r.funcionario) {
+                    const func = normalizeName(r.funcionario);
+                    statsFuncionarios[func] = (statsFuncionarios[func] || 0) + total;
+                }
+            });
+
+            // Ordenar proveedores (Top 10)
+            const topProveedores = Object.entries(statsProveedores)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+                
+            // Ordenar funcionarios
+            const topFuncionarios = Object.entries(statsFuncionarios)
+                .sort((a, b) => b[1] - a[1]);
+
+            return {
+                estados: statsEstados,
+                proveedores: {
+                    labels: topProveedores.map(p => p[0]),
+                    data: topProveedores.map(p => p[1])
+                },
+                funcionarios: {
+                    labels: topFuncionarios.map(f => f[0]),
+                    data: topFuncionarios.map(f => f[1])
+                }
+            };
+        }
+
+        function renderizarReportes() {
+            const datos = procesarDatosReportes();
+
+            // Chart Estados (Pie)
+            Chart.register(ChartDataLabels);
+            const ctxEstados = document.getElementById('chart-estados');
+            if (chartEstados) chartEstados.destroy();
+            chartEstados = new Chart(ctxEstados, {
+                type: 'doughnut',
+                data: {
+                    labels: ['En Stock', 'Vendido', 'Entregado', 'De Baja'],
+                    datasets: [{
+                        data: [datos.estados.stock, datos.estados.vendido, datos.estados.entregado, datos.estados.baja],
+                        backgroundColor: ['#15803D', '#475569', '#1D4ED8', '#DC2626'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'bottom' },
+                        datalabels: {
+                            color: '#ffffff',
+                            font: {
+                                weight: 'bold',
+                                size: 14
+                            },
+                            formatter: (value) => {
+                                return value > 0 ? value : '';
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Chart Proveedores (Bar)
+            const ctxProveedores = document.getElementById('chart-proveedores');
+            if (chartProveedores) chartProveedores.destroy();
+            chartProveedores = new Chart(ctxProveedores, {
+                type: 'bar',
+                data: {
+                    labels: datos.proveedores.labels,
+                    datasets: [{
+                        label: 'DIIOs Recibidos',
+                        data: datos.proveedores.data,
+                        backgroundColor: 'rgba(0, 91, 56, 0.7)',
+                        borderColor: '#005b38',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true } }
+                }
+            });
+
+            // Chart Funcionarios (Bar Horizontal)
+            const ctxFuncionarios = document.getElementById('chart-funcionarios');
+            if (chartFuncionarios) chartFuncionarios.destroy();
+            chartFuncionarios = new Chart(ctxFuncionarios, {
+                type: 'bar',
+                data: {
+                    labels: datos.funcionarios.labels,
+                    datasets: [{
+                        label: 'DIIOs Entregados',
+                        data: datos.funcionarios.data,
+                        backgroundColor: 'rgba(29, 78, 216, 0.7)',
+                        borderColor: '#1D4ED8',
+                        borderWidth: 1,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    indexAxis: 'y', // Barra horizontal
+                    scales: { x: { beginAtZero: true } }
+                }
+            });
+        }
+
+        function descargarReporteExcel() {
+            if (rangos.length === 0) {
+                alert('No hay datos para exportar.');
+                return;
+            }
+
+            const datos = procesarDatosReportes();
+            
+            // Hoja 1: Resumen
+            const wsResumenData = [
+                ['Resumen de Inventario DIIO', ''],
+                ['Fecha de exportación', new Date().toLocaleDateString()],
+                ['', ''],
+                ['ESTADO DE DIIOs', 'CANTIDAD'],
+                ['En Stock', datos.estados.stock || 0],
+                ['Entregados', datos.estados.entregado || 0],
+                ['Vendidos', datos.estados.vendido || 0],
+                ['De Baja', datos.estados.baja || 0],
+                ['TOTAL GENERAL', rangos.reduce((sum, r) => sum + (r.fin - r.inicio + 1), 0)],
+                ['', ''],
+                ['TOP ORÍGENES/PROVEEDORES', 'CANTIDAD']
+            ];
+
+            datos.proveedores.labels.forEach((label, i) => {
+                wsResumenData.push([label, datos.proveedores.data[i]]);
+            });
+
+            wsResumenData.push(['', '']);
+            wsResumenData.push(['DIIOs ENTREGADOS POR FUNCIONARIO', 'CANTIDAD']);
+            
+            datos.funcionarios.labels.forEach((label, i) => {
+                wsResumenData.push([label, datos.funcionarios.data[i]]);
+            });
+
+            const wsResumen = XLSX.utils.aoa_to_sheet(wsResumenData);
+
+            // Ajustar anchos de columna en Resumen
+            wsResumen['!cols'] = [{ wch: 35 }, { wch: 15 }];
+
+            // Hoja 2: Listado Completo
+            const wsDetalleData = [
+                ['N° DIIO', 'Estado', 'Fecha', 'Proveedor / Origen', 'Destinatario', 'RUT', 'RUP', 'Observaciones']
+            ];
+
+            // Ordenar rangos para que en el Excel salgan en orden
+            const rangosOrdenados = [...rangos].sort((a, b) => parseInt(a.inicio) - parseInt(b.inicio));
+
+            rangosOrdenados.forEach(item => {
+                const inicio = parseInt(item.inicio);
+                const fin = item.fin ? parseInt(item.fin) : inicio;
+                for (let numero = inicio; numero <= fin; numero++) {
+                    wsDetalleData.push([
+                        numero,
+                        item.estado || 'stock',
+                        item.fecha || '',
+                        item.proveedor || '',
+                        item.destinatario || '',
+                        item.rut || '',
+                        item.rup || '',
+                        item.observaciones || ''
+                    ]);
+                }
+            });
+
+            const wsDetalle = XLSX.utils.aoa_to_sheet(wsDetalleData);
+            
+            // Ajustar anchos de columna en Detalle
+            wsDetalle['!cols'] = [
+                { wch: 15 }, // DIIO
+                { wch: 15 }, // Estado
+                { wch: 12 }, // Fecha
+                { wch: 25 }, // Proveedor
+                { wch: 25 }, // Destinatario
+                { wch: 15 }, // RUT
+                { wch: 15 }, // RUP
+                { wch: 30 }  // Obs
+            ];
+
+            // Crear libro y agregar hojas
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, wsResumen, 'Resumen Reporte');
+            XLSX.utils.book_append_sheet(wb, wsDetalle, 'Listado Completo');
+
+            // Descargar
+            const fechaExp = new Date().toISOString().split('T')[0];
+            XLSX.writeFile(wb, `Reporte_DIIOs_${fechaExp}.xlsx`);
+        }
+
+        // Lógica de Modo Oscuro
+        function toggleTheme() {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const targetTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', targetTheme);
+            localStorage.setItem('theme', targetTheme);
+            actualizarIconoTema(targetTheme);
+        }
+
+        function actualizarIconoTema(theme) {
+            const btn = document.getElementById('btn-theme');
+            if(theme === 'dark') {
+                btn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            } else {
+                btn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            }
+        }
+
+        // Configurar icono inicial
+        document.addEventListener('DOMContentLoaded', () => {
+            const actualTheme = document.documentElement.getAttribute('data-theme') || 'light';
+            actualizarIconoTema(actualTheme);
+            
+            // Re-renderizar gráficos si hay un cambio de modo en reportes
+            // Esto es opcional, pero previene colores incompatibles.
+        });
+    </script>
+</body>
+</html>

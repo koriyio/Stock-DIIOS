@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Consolidar Rangos DIIO - SAG Talca</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="propuestas-sag.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #F5F9F6 0%, #E8F5E9 100%);
+            padding: 2rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.15);
+            margin-bottom: 1.5rem;
+            border: 1px solid #D1E7D6;
+        }
+        h1 {
+            color: #009639;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .btn {
+            background: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 150, 57, 0.25);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0.5rem 0.5rem 0.5rem 0;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 150, 57, 0.35);
+        }
+        .btn-danger {
+            background: linear-gradient(135deg, #DC2626 0%, #B91C1C 100%);
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        .stat {
+            background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E9 100%);
+            padding: 1.5rem;
+            border-radius: 14px;
+            text-align: center;
+            border: 2px solid #8BC53F;
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+            color: #009639;
+        }
+        .stat-label {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            color: #64748B;
+        }
+        .log {
+            background: #1E293B;
+            color: #E2E8F0;
+            padding: 1rem;
+            border-radius: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+        }
+        .log-entry {
+            padding: 0.35rem 0;
+            border-bottom: 1px solid #334155;
+        }
+        .success { color: #86EFAC; }
+        .error { color: #FCA5A5; }
+        .info { color: #93C5FD; }
+        .warning { color: #FCD34D; }
+        .hidden { display: none; }
+        .alert {
+            padding: 1rem 1.25rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        .alert-info {
+            background: linear-gradient(135deg, #DBEAFE 0%, #EFF6FF 100%);
+            color: #1D4ED8;
+            border: 2px solid #93C5FD;
+        }
+        .alert-success {
+            background: linear-gradient(135deg, #DCFCE7 0%, #F1F8E9 100%);
+            color: #15803D;
+            border: 2px solid #86EFAC;
+        }
+        .alert-warning {
+            background: linear-gradient(135deg, #FEF3C7 0%, #FFFBEB 100%);
+            color: #D97706;
+            border: 2px solid #FCD34D;
+        }
+        .progress-bar {
+            background: #E8F5E9;
+            border-radius: 10px;
+            height: 30px;
+            overflow: hidden;
+            margin: 1rem 0;
+        }
+        .progress-fill {
+            background: linear-gradient(90deg, #009639, #8BC53F);
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin-top: 1rem;
+        }
+        thead th {
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 700;
+            color: #007A2E;
+            border-bottom: 2px solid #8BC53F;
+        }
+        tbody td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #E2E8F0;
+        }
+        tbody tr:hover {
+            background: #F1F8E9;
+        }
+    </style>
+    <script src="api.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1><i class="fa-solid fa-layer-group"></i> Consolidar Rangos DIIO</h1>
+            <p style="color: #64748B;">Reagrupar DIIOs contiguos del mismo estado en rangos consolidados</p>
+            
+            <div class="alert alert-warning">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+                <div>
+                    <strong>Importante:</strong> Esta herramienta consolidará los DIIOs individuales en rangos.<br>
+                    Ejemplo: Si tienes 300 DIIOs individuales del 24245101 al 24245400 con el mismo estado,<br>
+                    se convertirán en UN solo rango: 24245101 - 24245400 (300 DIIOs)
+                </div>
+            </div>
+
+            <button class="btn" onclick="analizarDatos()">
+                <i class="fa-solid fa-magnifying-glass"></i> Analizar Datos Actuales
+            </button>
+            <button class="btn" id="btn-consolidar" disabled onclick="consolidarRangos()">
+                <i class="fa-solid fa-object-group"></i> Consolidar Rangos
+            </button>
+        </div>
+
+        <div class="card hidden" id="stats-card">
+            <h2><i class="fa-solid fa-chart-pie"></i> Estado Actual</h2>
+            <div class="stats">
+                <div class="stat">
+                    <span class="stat-value" id="stat-registros">0</span>
+                    <span class="stat-label">Registros Actuales</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value" id="stat-rangos">0</span>
+                    <span class="stat-label">Rangos Después</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card hidden" id="preview-card">
+            <h2><i class="fa-solid fa-table"></i> Vista Previa de Rangos</h2>
+            <div style="max-height: 400px; overflow-y: auto;">
+                <table id="preview-table">
+                    <thead>
+                        <tr>
+                            <th>Inicio</th>
+                            <th>Fin</th>
+                            <th>Cantidad</th>
+                            <th>Estado</th>
+                            <th>Proveedor</th>
+                        </tr>
+                    </thead>
+                    <tbody id="preview-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="card hidden" id="log-card">
+            <h2><i class="fa-solid fa-terminal"></i> Log de Proceso</h2>
+            <div class="log" id="log-container"></div>
+        </div>
+
+        <div class="card hidden" id="result-card">
+            <div class="alert alert-success">
+                <i class="fa-solid fa-circle-check"></i>
+                <div>
+                    <strong>¡Consolidación Completada!</strong><br>
+                    Se redujeron los registros de <span id="antes-total">0</span> a <span id="despues-total">0</span> rangos.
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 1.5rem;">
+                <a href="rangos.html" class="btn">
+                    <i class="fa-solid fa-arrow-right-to-bracket"></i> Ver Rangos Consolidados
+                </a>
+                <button class="btn" onclick="location.reload()">
+                    <i class="fa-solid fa-rotate"></i> Nueva Consolidación
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let inventario = [];
+        let rangosConsolidados = [];
+
+        function log(mensaje, tipo = 'info') {
+            const container = document.getElementById('log-container');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${tipo}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${mensaje}`;
+            container.appendChild(entry);
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        async function analizarDatos() {
+            log('=== ANALIZANDO DATOS ===', 'info');
+            
+            try {
+                inventario = await window.api.getRangos() || [];
+            } catch (e) {
+                console.error('Error al cargar datos:', e);
+                inventario = [];
+            }
+            
+            if (inventario.length === 0) {
+                alert('No hay datos en el inventario');
+                return;
+            }
+
+            log(`Registros actuales: ${inventario.length.toLocaleString()}`, 'info');
+
+            // Contar DIIOs individuales vs rangos
+            const individuales = inventario.filter(i => i.inicio === i.fin).length;
+            const rangos = inventario.filter(i => i.inicio !== i.fin).length;
+
+            log(`DIIOs individuales: ${individuales.toLocaleString()}`, 'info');
+            log(`Rangos ya consolidados: ${rangos.toLocaleString()}`, 'info');
+
+            // Consolidar para vista previa
+            rangosConsolidados = consolidar(inventario);
+
+            document.getElementById('stat-registros').textContent = inventario.length.toLocaleString();
+            document.getElementById('stat-rangos').textContent = rangosConsolidados.length.toLocaleString();
+            
+            document.getElementById('stats-card').classList.remove('hidden');
+            document.getElementById('preview-card').classList.remove('hidden');
+            document.getElementById('log-card').classList.remove('hidden');
+            document.getElementById('btn-consolidar').disabled = false;
+
+            // Mostrar vista previa
+            const tbody = document.getElementById('preview-body');
+            tbody.innerHTML = rangosConsolidados.slice(0, 50).map(r => `
+                <tr>
+                    <td>${r.inicio}</td>
+                    <td>${r.fin}</td>
+                    <td>${r.cantidad.toLocaleString()}</td>
+                    <td><span class="estado-badge ${escapeHTML(r.estado)}">${escapeHTML(r.estado)}</span></td>
+                    <td>${escapeHTML(r.proveedor)}</td>
+                </tr>
+            `).join('');
+
+            if (rangosConsolidados.length > 50) {
+                tbody.innerHTML += `<tr><td colspan="5" style="text-align: center; color: #94A3B8;">... y ${rangosConsolidados.length - 50} rangos más</td></tr>`;
+            }
+
+            log('Vista previa generada. Haz clic en "Consolidar Rangos" para aplicar.', 'warning');
+        }
+
+        function consolidar(inventario) {
+            if (inventario.length <= 1) return inventario;
+
+            const ordenados = [...inventario].sort((a, b) => a.inicio - b.inicio);
+            
+            const resultado = [];
+            let rangoActual = null;
+
+            for (const item of ordenados) {
+                if (!rangoActual) {
+                    rangoActual = {
+                        id: crypto.randomUUID(),
+                        inicio: item.inicio,
+                        fin: item.fin,
+                        estado: item.estado,
+                        proveedor: item.proveedor,
+                        fecha: item.fecha,
+                        destinatario: item.destinatario,
+                        rut: item.rut,
+                        funcionario: item.funcionario,
+                        cantidad: item.cantidad || (item.fin - item.inicio + 1)
+                    };
+                } else if (
+                    item.inicio === rangoActual.fin + 1 &&
+                    item.estado === rangoActual.estado &&
+                    item.proveedor === rangoActual.proveedor &&
+                    item.destinatario === rangoActual.destinatario &&
+                    item.funcionario === rangoActual.funcionario &&
+                    item.rut === rangoActual.rut
+                ) {
+                    rangoActual.fin = item.fin;
+                    rangoActual.cantidad = rangoActual.fin - rangoActual.inicio + 1;
+                } else {
+                    resultado.push(rangoActual);
+                    rangoActual = {
+                        id: crypto.randomUUID(),
+                        inicio: item.inicio,
+                        fin: item.fin,
+                        estado: item.estado,
+                        proveedor: item.proveedor,
+                        fecha: item.fecha,
+                        destinatario: item.destinatario,
+                        rut: item.rut,
+                        funcionario: item.funcionario,
+                        cantidad: item.cantidad || (item.fin - item.inicio + 1)
+                    };
+                }
+            }
+
+            if (rangoActual) {
+                resultado.push(rangoActual);
+            }
+
+            return resultado;
+        }
+
+        async function consolidarRangos() {
+            if (!confirm('¿Estás seguro de consolidar los rangos? Esta acción no se puede deshacer.')) {
+                return;
+            }
+
+            log('=== INICIANDO CONSOLIDACIÓN ===', 'info');
+            
+            const antes = inventario.length;
+            log(`Registros antes: ${antes.toLocaleString()}`, 'info');
+
+            // Consolidar
+            rangosConsolidados = consolidar(inventario);
+            
+            const despues = rangosConsolidados.length;
+            log(`Registros después: ${despues.toLocaleString()}`, 'success');
+            log(`Reducción: ${antes - despues} registros (${((1 - despues/antes) * 100).toFixed(1)}%)`, 'success');
+
+            // Guardar
+            log('Guardando en backend...', 'info');
+            await window.api.saveRangos(rangosConsolidados);
+            log('✓ Datos guardados exitosamente', 'success');
+
+            // Mostrar resultado
+            document.getElementById('antes-total').textContent = antes.toLocaleString();
+            document.getElementById('despues-total').textContent = despues.toLocaleString();
+            document.getElementById('result-card').classList.remove('hidden');
+
+            log('=== CONSOLIDACIÓN COMPLETADA ===', 'success');
+        }
+    </script>
+</body>
+</html>

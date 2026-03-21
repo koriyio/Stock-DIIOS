@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rangos DIIO - SAG Talca</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --sag-verde: #009639;
+            --sag-verde-oscuro: #007A2E;
+            --sag-lima: #8BC53F;
+            --bg-page: #F5F9F6;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-page);
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--sag-verde) 0%, var(--sag-verde-oscuro) 100%);
+            color: white;
+            padding: 1.5rem 0;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.2);
+        }
+        
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--sag-lima);
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+        
+        .logo .subtitle {
+            font-size: 0.85rem;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .nav-tabs a {
+            padding: 0.75rem 1.5rem;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            text-decoration: none;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .nav-tabs a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .nav-tabs a.active {
+            background: white;
+            color: var(--sag-verde);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 2px solid var(--sag-lima);
+        }
+        
+        .stat-card.total {
+            background: linear-gradient(135deg, var(--sag-verde) 0%, var(--sag-verde-oscuro) 100%);
+        }
+        
+        .stat-card.total .stat-value,
+        .stat-card.total .stat-label {
+            color: white;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+        
+        .tabs-wrapper {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 2px solid var(--sag-lima);
+            overflow: hidden;
+        }
+        
+        .tabs-header {
+            display: flex;
+            background: #F8FAFC;
+            border-bottom: 3px solid #E2E8F0;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+        
+        .tabs-header::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .tabs-header::-webkit-scrollbar-track {
+            background: #F1F5F9;
+        }
+        
+        .tabs-header::-webkit-scrollbar-thumb {
+            background: var(--sag-verde);
+            border-radius: 4px;
+        }
+        
+        .tab-btn {
+            padding: 1.25rem 2rem;
+            border: none;
+            background: transparent;
+            color: #64748B;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            white-space: nowrap;
+            border-bottom: 4px solid transparent;
+            position: relative;
+        }
+        
+        .tab-btn:hover {
+            background: #F1F8E9;
+            color: var(--sag-verde);
+        }
+        
+        .tab-btn.active {
+            color: var(--sag-verde);
+            background: white;
+            border-bottom-color: var(--sag-verde);
+        }
+        
+        .tab-rango {
+            font-size: 1rem;
+            font-weight: 700;
+            display: block;
+            margin-bottom: 0.35rem;
+        }
+        
+        .tab-cantidad {
+            font-size: 0.75rem;
+            color: #94A3B8;
+            font-weight: 400;
+        }
+        
+        .tab-btn.active .tab-cantidad {
+            color: var(--sag-verde);
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            top: 0.75rem;
+            right: 0.75rem;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .tab-indicator.stock { background: #15803D; }
+        .tab-indicator.vendido { background: #475569; }
+        .tab-indicator.entregado { background: #1D4ED8; }
+        .tab-indicator.baja { background: #DC2626; }
+        
+        .tab-content {
+            display: none;
+            padding: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .rango-info-bar {
+            background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E9 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            border: 2px solid var(--sag-lima);
+        }
+        
+        .rango-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .rango-titulo {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--sag-verde);
+        }
+        
+        .rango-detalles {
+            display: flex;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+        
+        .rango-detalle {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .rango-detalle i {
+            color: var(--sag-verde);
+        }
+        
+        .diio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 0.75rem;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 1rem;
+            background: #F8FAFC;
+            border-radius: 12px;
+        }
+        
+        .diio-card {
+            background: white;
+            border-radius: 10px;
+            padding: 1rem;
+            text-align: center;
+            border: 2px solid #E2E8F0;
+            transition: all 0.3s;
+        }
+        
+        .diio-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 12px rgba(0, 150, 57, 0.15);
+        }
+        
+        .diio-card.stock { border-color: #86EFAC; background: #F0FDF4; }
+        .diio-card.vendido { border-color: #CBD5E1; background: #F8FAFC; }
+        .diio-card.entregado { border-color: #93C5FD; background: #EFF6FF; }
+        .diio-card.baja { border-color: #FCA5A5; background: #FEF2F2; }
+        
+        .diio-numero {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--sag-verde);
+            display: block;
+            margin-bottom: 0.5rem;
+        }
+        
+        .diio-estado {
+            display: inline-block;
+            padding: 0.25rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .diio-estado.stock { background: #DCFCE7; color: #15803D; }
+        .diio-estado.vendido { background: #F1F5F9; color: #475569; }
+        .diio-estado.entregado { background: #DBEAFE; color: #1D4ED8; }
+        .diio-estado.baja { background: #FEE2E2; color: #DC2626; }
+        
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #94A3B8;
+        }
+        
+        .empty-state i {
+            font-size: 4rem;
+            opacity: 0.5;
+            margin-bottom: 1rem;
+        }
+        
+        .btn-cargar {
+            background: linear-gradient(135deg, var(--sag-verde) 0%, var(--sag-verde-oscuro) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn-cargar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 150, 57, 0.3);
+        }
+        
+        .search-bar {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 16px;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+        }
+        
+        .search-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .search-input {
+            flex: 1;
+            min-width: 200px;
+            padding: 0.75rem 1rem;
+            border: 2px solid #E2E8F0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--sag-verde);
+        }
+    </style>
+    <script src="api.js"></script>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fa-solid fa-layer-group"></i>
+                <div>
+                    <h1>Pestañas de Rangos DIIO</h1>
+                    <span class="subtitle">Oficina SAG Talca</span>
+                </div>
+            </div>
+            <div class="nav-tabs">
+                <a href="index.html"><i class="fa-solid fa-house"></i> Inicio</a>
+                <a href="listado-completo.html"><i class="fa-solid fa-list"></i> Listado</a>
+                <a href="#" class="active"><i class="fa-solid fa-folder-open"></i> Rangos</a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Barra de estadísticas -->
+        <div class="stats-bar">
+            <div class="stat-card total">
+                <span class="stat-value" id="total-general">0</span>
+                <span class="stat-label">Total DIIOs</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #15803D;" id="total-stock">0</span>
+                <span class="stat-label">Stock</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #1D4ED8;" id="total-entregado">0</span>
+                <span class="stat-label">Entregados</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #475569;" id="total-vendido">0</span>
+                <span class="stat-label">Vendidos</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-value" style="color: #DC2626;" id="total-baja">0</span>
+                <span class="stat-label">Baja</span>
+            </div>
+        </div>
+
+        <!-- Barra de búsqueda -->
+        <div class="search-bar">
+            <div class="search-row">
+                <input type="text" class="search-input" id="buscar-rango" placeholder="🔍 Buscar por rango (ej: 24245101)" oninput="filtrarPestanas()">
+                <input type="text" class="search-input" id="buscar-proveedor" placeholder="🏢 Buscar por proveedor" oninput="filtrarPestanas()">
+                <select class="search-input" id="filtrar-estado" onchange="filtrarPestanas()">
+                    <option value="">Todos los estados</option>
+                    <option value="stock">En Stock</option>
+                    <option value="vendido">Vendidos</option>
+                    <option value="entregado">Entregados</option>
+                    <option value="baja">De Baja</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Contenedor de pestañas -->
+        <div class="tabs-wrapper">
+            <div class="tabs-header" id="tabs-header">
+                <!-- Las pestañas se generan aquí -->
+            </div>
+
+            <div id="tabs-content">
+                <!-- El contenido se genera aquí -->
+            </div>
+        </div>
+
+        <div class="empty-state hidden" id="empty-state">
+            <i class="fa-solid fa-folder-open"></i>
+            <h2>No hay rangos registrados</h2>
+            <p style="margin: 1rem 0;">Comienza agregando rangos desde el formulario principal o cargando un Excel</p>
+            <a href="index.html" class="btn-cargar">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Ir al Inicio
+            </a>
+        </div>
+    </main>
+
+    <script>
+        let rangos = [];
+        let rangosFiltrados = [];
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarRangos();
+        });
+
+        async function cargarRangos() {
+            rangos = await window.api.getRangos() || [];
+            
+            if (rangos.length === 0) {
+                document.getElementById('empty-state').classList.remove('hidden');
+                document.querySelector('.stats-bar').classList.add('hidden');
+                document.querySelector('.search-bar').classList.add('hidden');
+                document.querySelector('.tabs-wrapper').classList.add('hidden');
+                return;
+            }
+
+            // Ordenar por DIIO inicial
+            rangos.sort((a, b) => a.inicio - b.inicio);
+            rangosFiltrados = [...rangos];
+
+            renderizarPestanas();
+            actualizarTotales();
+        }
+
+        function renderizarPestanas() {
+            const tabsHeader = document.getElementById('tabs-header');
+            const tabsContent = document.getElementById('tabs-content');
+
+            if (rangosFiltrados.length === 0) {
+                tabsHeader.innerHTML = '';
+                tabsContent.innerHTML = '<div class="empty-state"><p>No se encontraron rangos con los filtros seleccionados</p></div>';
+                return;
+            }
+
+            let tabsHTML = '';
+            let contentHTML = '';
+
+            rangosFiltrados.forEach((rango, index) => {
+                const isActive = index === 0 ? 'active' : '';
+                const cantidad = rango.fin - rango.inicio + 1;
+                const iconClass = rango.estado === 'stock' ? 'fa-box' : 
+                                 rango.estado === 'vendido' ? 'fa-store' :
+                                 rango.estado === 'entregado' ? 'fa-share' : 'fa-trash';
+
+                // Pestaña
+                tabsHTML += `
+                    <button class="tab-btn ${isActive}" onclick="activarPestana(${index})">
+                        <span class="tab-rango">${rango.inicio} - ${rango.fin}</span>
+                        <span class="tab-cantidad">${cantidad.toLocaleString()} DIIOs</span>
+                        <span class="tab-indicator ${rango.estado}"></span>
+                    </button>
+                `;
+
+                // Contenido
+                contentHTML += `
+                    <div class="tab-content ${isActive}" id="tab-${index}">
+                        <div class="rango-info-bar">
+                            <div class="rango-info-header">
+                                <span class="rango-titulo">
+                                    <i class="fa-solid ${iconClass}"></i> 
+                                    Rango: ${rango.inicio} - ${rango.fin}
+                                </span>
+                                <span class="badge ${rango.estado}" style="font-size: 0.85rem; padding: 0.5rem 1rem;">
+                                    ${rango.estado.toUpperCase()}
+                                </span>
+                            </div>
+                            <div class="rango-detalles">
+                                <div class="rango-detalle">
+                                    <i class="fa-solid fa-hashtag"></i>
+                                    <span><strong>${cantidad.toLocaleString()}</strong> DIIOs en este rango</span>
+                                </div>
+                                <div class="rango-detalle">
+                                    <i class="fa-solid fa-building"></i>
+                                    <span>${escapeHTML(rango.proveedor || 'SAG Nacional')}</span>
+                                </div>
+                                <div class="rango-detalle">
+                                    <i class="fa-solid fa-calendar"></i>
+                                    <span>${escapeHTML(rango.fecha || '-')}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h3 style="margin-bottom: 1rem; color: var(--sag-verde);">
+                            <i class="fa-solid fa-grid-2"></i> 
+                            DIIOs del ${rango.inicio} al ${rango.fin}
+                        </h3>
+                        
+                        <div class="diio-grid">
+                            ${generarDIIOsGrid(rango.inicio, rango.fin, rango.estado)}
+                        </div>
+                    </div>
+                `;
+            });
+
+            tabsHeader.innerHTML = tabsHTML;
+            tabsContent.innerHTML = contentHTML;
+        }
+
+        function generarDIIOsGrid(inicio, fin, estado) {
+            const maxMostrar = 500; // Límite para no sobrecargar el DOM
+            const total = fin - inicio + 1;
+            let html = '';
+
+            const finReal = total > maxMostrar ? inicio + maxMostrar - 1 : fin;
+
+            for (let i = inicio; i <= finReal; i++) {
+                html += `
+                    <div class="diio-card ${estado}">
+                        <span class="diio-numero">${i}</span>
+                        <span class="diio-estado ${estado}">${estado}</span>
+                    </div>
+                `;
+            }
+
+            if (total > maxMostrar) {
+                html += `
+                    <div class="diio-card" style="background: #F1F5F9; border-color: #CBD5E1;">
+                        <span class="diio-numero" style="color: #64748B;">+${total - maxMostrar} más</span>
+                        <span class="diio-estado" style="background: #E2E8F0; color: #64748B;">...</span>
+                    </div>
+                `;
+            }
+
+            return html;
+        }
+
+        function activarPestana(index) {
+            // Remover active de todas
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+
+            // Activar seleccionada
+            document.querySelectorAll('.tab-btn')[index].classList.add('active');
+            document.getElementById(`tab-${index}`).classList.add('active');
+        }
+
+        function actualizarTotales() {
+            let total = 0, stock = 0, entregado = 0, vendido = 0, baja = 0;
+
+            rangos.forEach(rango => {
+                const cantidad = rango.fin - rango.inicio + 1;
+                total += cantidad;
+                
+                if (rango.estado === 'stock') stock += cantidad;
+                else if (rango.estado === 'entregado') entregado += cantidad;
+                else if (rango.estado === 'vendido') vendido += cantidad;
+                else if (rango.estado === 'baja') baja += cantidad;
+            });
+
+            document.getElementById('total-general').textContent = total.toLocaleString();
+            document.getElementById('total-stock').textContent = stock.toLocaleString();
+            document.getElementById('total-entregado').textContent = entregado.toLocaleString();
+            document.getElementById('total-vendido').textContent = vendido.toLocaleString();
+            document.getElementById('total-baja').textContent = baja.toLocaleString();
+        }
+
+        function filtrarPestanas() {
+            const buscarRango = document.getElementById('buscar-rango').value;
+            const buscarProveedor = document.getElementById('buscar-proveedor').value.toLowerCase();
+            const filtrarEstado = document.getElementById('filtrar-estado').value;
+
+            rangosFiltrados = rangos.filter(rango => {
+                // Filtro por rango (buscar si el número está dentro del rango)
+                if (buscarRango) {
+                    const num = parseInt(buscarRango);
+                    if (num < rango.inicio || num > rango.fin) return false;
+                }
+
+                // Filtro por proveedor
+                if (buscarProveedor && !rango.proveedor.toLowerCase().includes(buscarProveedor)) {
+                    return false;
+                }
+
+                // Filtro por estado
+                if (filtrarEstado && rango.estado !== filtrarEstado) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            renderizarPestanas();
+        }
+    </script>
+</body>
+</html>

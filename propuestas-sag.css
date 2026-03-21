@@ -1,0 +1,921 @@
+/* =====================================================
+   PROPUESTAS ESTÉTICAS - SAG TALCA
+   Colores Corporativos SAG Chile
+   =====================================================
+   
+   COLORES OFICIALES SAG:
+   - Verde SAG: Pantone 349 C → #009639 (RGB: 0, 150, 57)
+   - Verde Orgánico: Pantone 361 C → #8BC53F (RGB: 139, 197, 63)
+   - Azul Gobierno: #1E3A6E (institucional)
+   - Rojo Alizarin: #E73039 (accent - brandfetch)
+   
+   ===================================================== */
+
+/* =====================================================
+   PROPUESTA 1: "SAG INSTITUCIONAL"
+   - Verde corporativo como color principal
+   - Diseño limpio y profesional
+   - Ideal para ambiente gubernamental
+   ===================================================== */
+
+:root.propuesta-1 {
+    /* Colores SAG Oficiales */
+    --sag-verde: #009639;
+    --sag-verde-oscuro: #007A2E;
+    --sag-verde-claro: #00B347;
+    --sag-lima: #8BC53F;
+    
+    /* Colores base */
+    --primary-color: #009639;
+    --primary-hover: #007A2E;
+    --primary-light: #E8F5E9;
+    
+    --bg-page: #F5F9F6;
+    --bg-card: #FFFFFF;
+    --bg-gradient: linear-gradient(135deg, #F5F9F6 0%, #E8F5E9 100%);
+    
+    --header-bg: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+    --header-accent: #8BC53F;
+    
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    --text-light: #94A3B8;
+    
+    --border-color: #D1E7D6;
+    --border-focus: #009639;
+    
+    --radius-md: 12px;
+    --radius-lg: 20px;
+    --radius-xl: 28px;
+    
+    --shadow-sm: 0 2px 8px rgba(0, 150, 57, 0.08);
+    --shadow-md: 0 4px 20px rgba(0, 150, 57, 0.12);
+    --shadow-lg: 0 10px 40px rgba(0, 150, 57, 0.16);
+    
+    /* Estados */
+    --stock-bg: #DCFCE7;
+    --stock-text: #15803D;
+    --entregado-bg: #DBEAFE;
+    --entregado-text: #1D4ED8;
+    --vendido-bg: #F1F5F9;
+    --vendido-text: #475569;
+    --baja-bg: #FEE2E2;
+    --baja-text: #DC2626;
+}
+
+/* Estilos Propuesta 1 */
+.propuesta-1 body {
+    background: var(--bg-gradient);
+}
+
+.propuesta-1 .header {
+    background: var(--header-bg);
+    position: relative;
+    overflow: hidden;
+}
+
+.propuesta-1 .header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 300px;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(139, 197, 63, 0.1));
+    pointer-events: none;
+}
+
+.propuesta-1 .logo i {
+    color: #8BC53F;
+    font-size: 2rem;
+}
+
+.propuesta-1 .stat-card {
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.propuesta-1 .tab-btn {
+    position: relative;
+}
+
+.propuesta-1 .tab-btn.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    height: 3px;
+    background: #8BC53F;
+    border-radius: 3px 3px 0 0;
+}
+
+.propuesta-1 .card {
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-md);
+    position: relative;
+    overflow: hidden;
+}
+
+.propuesta-1 .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #009639, #8BC53F);
+}
+
+.propuesta-1 .btn-primary {
+    background: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+    box-shadow: 0 4px 12px rgba(0, 150, 57, 0.3);
+}
+
+.propuesta-1 .btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 150, 57, 0.4);
+}
+
+.propuesta-1 .form-group input:focus {
+    border-color: #009639;
+    box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.15);
+    background: #FAFDFB;
+}
+
+.propuesta-1 .form-summary {
+    background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+    border-color: #8BC53F;
+}
+
+.propuesta-1 thead th {
+    background: linear-gradient(135deg, #F1F8E9 0%, #E8F5E9 100%);
+    color: #007A2E;
+}
+
+.propuesta-1 tbody tr:hover {
+    background: linear-gradient(90deg, #F1F8E9 0%, #FFFFFF 100%);
+}
+
+.propuesta-1 .status-select.stock {
+    background: linear-gradient(135deg, #DCFCE7 0%, #BBF7D0 100%);
+}
+
+.propuesta-1 .modal-content {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.propuesta-1 .modal-header {
+    background: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+    color: white;
+    padding: 1.25rem 1.5rem;
+    margin: -1.75rem -1.75rem 1.5rem;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+}
+
+/* =====================================================
+   PROPUESTA 2: "SAG MODERNO"
+   - Gradientes sutiles
+   - Sombras suaves
+   - Bordes redondeados
+   ===================================================== */
+
+:root.propuesta-2 {
+    --sag-verde: #009639;
+    --sag-lima: #8BC53F;
+    
+    --primary-color: #009639;
+    --primary-hover: #008030;
+    --primary-gradient: linear-gradient(135deg, #009639 0%, #8BC53F 100%);
+    
+    --bg-page: #FAFAFA;
+    --bg-card: #FFFFFF;
+    --bg-pattern: radial-gradient(circle at 1px 1px, #009639 1px, transparent 0);
+    
+    --header-bg: #FFFFFF;
+    --header-text: #009639;
+    
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    
+    --border-color: #E2E8F0;
+    --border-accent: #8BC53F;
+    
+    --radius-md: 16px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+    
+    --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 40px rgba(0, 0, 0, 0.08);
+    --shadow-colored: 0 4px 20px rgba(0, 150, 57, 0.15);
+}
+
+.propuesta-2 body {
+    background-color: var(--bg-page);
+    background-image: var(--bg-pattern);
+    background-size: 24px 24px;
+}
+
+.propuesta-2 .header {
+    background: var(--header-bg);
+    border-bottom: 3px solid var(--primary-color);
+    box-shadow: var(--shadow-sm);
+}
+
+.propuesta-2 .header-content {
+    padding-top: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.propuesta-2 .logo {
+    color: var(--primary-color);
+}
+
+.propuesta-2 .logo i {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.propuesta-2 .logo h1 {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.propuesta-2 .subtitle {
+    color: var(--text-muted) !important;
+}
+
+.propuesta-2 .stat-card {
+    background: #FFFFFF;
+    border: 2px solid var(--border-color);
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+}
+
+.propuesta-2 .stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-colored);
+    border-color: var(--primary-color);
+}
+
+.propuesta-2 .stat-title {
+    color: var(--text-muted);
+}
+
+.propuesta-2 .stat-value {
+    background: var(--primary-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.propuesta-2 .nav-tabs {
+    background: #FFFFFF;
+    border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    padding: 0.5rem 0.5rem 0;
+    margin-top: 1.5rem;
+    box-shadow: var(--shadow-sm);
+}
+
+.propuesta-2 .tab-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+}
+
+.propuesta-2 .tab-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary-color);
+}
+
+.propuesta-2 .tab-btn.active {
+    background: var(--primary-gradient);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-colored);
+}
+
+.propuesta-2 .card {
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.propuesta-2 .card h2 {
+    color: var(--primary-color);
+}
+
+.propuesta-2 .btn-primary {
+    background: var(--primary-gradient);
+    border: none;
+    box-shadow: var(--shadow-colored);
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.propuesta-2 .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 25px rgba(0, 150, 57, 0.25);
+}
+
+.propuesta-2 .btn-secondary {
+    border-radius: var(--radius-md);
+    font-weight: 600;
+}
+
+.propuesta-2 .form-group input {
+    border-radius: var(--radius-md);
+    border-width: 2px;
+    background: #FFFFFF;
+}
+
+.propuesta-2 .form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px rgba(0, 150, 57, 0.1);
+}
+
+.propuesta-2 .form-summary {
+    background: linear-gradient(135deg, #F1F8E9 0%, #F9FBE7 100%);
+    border-color: var(--sag-lima);
+    border-radius: var(--radius-md);
+    font-weight: 500;
+}
+
+.propuesta-2 thead th {
+    background: #F1F8E9;
+    color: var(--primary-color);
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+.propuesta-2 tbody tr {
+    transition: all 0.2s ease;
+}
+
+.propuesta-2 tbody tr:hover {
+    background: #F1F8E9;
+    transform: scale(1.005);
+}
+
+.propuesta-2 .status-select {
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.propuesta-2 .modal-content {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.propuesta-2 .modal-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 1.5rem;
+    margin: -1.75rem -1.75rem 1.5rem;
+}
+
+.propuesta-2 .close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.propuesta-2 .close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* =====================================================
+   PROPUESTA 3: "SAG MINIMALISTA"
+   - Diseño limpio
+   - Espacios generosos
+   - Tipografía destacada
+   ===================================================== */
+
+:root.propuesta-3 {
+    --sag-verde: #009639;
+    --sag-verde-oscuro: #006B29;
+    --sag-lima: #8BC53F;
+    
+    --primary-color: #006B29;
+    --primary-hover: #005220;
+    --primary-light: #F0F7F0;
+    
+    --bg-page: #FFFFFF;
+    --bg-card: #FFFFFF;
+    
+    --header-bg: #006B29;
+    
+    --text-main: #1A1A1A;
+    --text-muted: #737373;
+    --text-light: #A3A3A3;
+    
+    --border-color: #E5E5E5;
+    --border-dark: #262626;
+    
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --radius-xl: 16px;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.propuesta-3 body {
+    background: var(--bg-page);
+}
+
+.propuesta-3 .header {
+    background: var(--header-bg);
+    padding: 2rem 0 1.5rem;
+}
+
+.propuesta-3 .logo i {
+    color: #FFFFFF;
+}
+
+.propuesta-3 .logo h1 {
+    font-weight: 300;
+    letter-spacing: -0.5px;
+}
+
+.propuesta-3 .subtitle {
+    font-weight: 300 !important;
+    opacity: 0.8;
+}
+
+.propuesta-3 .stats {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 1rem 1.5rem;
+    border-radius: var(--radius-lg);
+}
+
+.propuesta-3 .stat-card {
+    background: transparent;
+    border: none;
+    padding: 0.5rem 1.5rem;
+}
+
+.propuesta-3 .stat-title {
+    font-size: 0.65rem;
+    letter-spacing: 2px;
+    opacity: 0.7;
+}
+
+.propuesta-3 .stat-value {
+    font-weight: 300;
+    font-size: 2rem;
+    letter-spacing: -1px;
+}
+
+.propuesta-3 .nav-tabs {
+    margin-top: 0;
+    padding: 0;
+    gap: 0;
+    background: transparent;
+}
+
+.propuesta-3 .tab-btn {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.6);
+    padding: 1rem 2rem;
+    font-weight: 400;
+    font-size: 0.95rem;
+    border-radius: 0;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.propuesta-3 .tab-btn:hover {
+    color: #FFFFFF;
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.propuesta-3 .tab-btn.active {
+    color: #FFFFFF;
+    background: transparent;
+    border-bottom-color: #FFFFFF;
+}
+
+.propuesta-3 .container {
+    margin-top: 3rem;
+}
+
+.propuesta-3 .card {
+    box-shadow: none;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-lg);
+    padding: 2rem;
+}
+
+.propuesta-3 .card h2 {
+    font-weight: 400;
+    font-size: 1.25rem;
+    letter-spacing: -0.3px;
+    color: var(--text-main);
+    margin-bottom: 2rem;
+}
+
+.propuesta-3 .form-group label {
+    font-weight: 500;
+    color: var(--text-main);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.9rem;
+}
+
+.propuesta-3 .form-group input {
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border-color);
+    padding: 0.875rem 1rem;
+    font-size: 1rem;
+    background: #FAFAFA;
+}
+
+.propuesta-3 .form-group input:focus {
+    border-color: var(--border-dark);
+    background: #FFFFFF;
+    box-shadow: none;
+}
+
+.propuesta-3 .form-summary {
+    background: var(--primary-light);
+    border: 1px solid var(--border-color);
+    padding: 1rem 1.25rem;
+    font-size: 0.95rem;
+}
+
+.propuesta-3 .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 500;
+    font-size: 0.9rem;
+    border-radius: var(--radius-md);
+    letter-spacing: 0.3px;
+}
+
+.propuesta-3 .btn-primary {
+    background: var(--primary-color);
+    border: none;
+}
+
+.propuesta-3 .btn-primary:hover {
+    background: var(--primary-hover);
+    transform: none;
+    box-shadow: none;
+}
+
+.propuesta-3 .btn-secondary {
+    border-color: var(--border-color);
+    background: transparent;
+}
+
+.propuesta-3 .btn-secondary:hover {
+    background: var(--bg-page);
+    border-color: var(--border-dark);
+}
+
+.propuesta-3 table {
+    font-size: 0.9rem;
+}
+
+.propuesta-3 thead th {
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 600;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 1rem;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.propuesta-3 tbody td {
+    padding: 1.25rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.propuesta-3 tbody tr:hover {
+    background: var(--primary-light);
+}
+
+.propuesta-3 .status-select {
+    font-weight: 600;
+    padding: 0.4rem 0.8rem;
+}
+
+.propuesta-3 .modal-content {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.propuesta-3 .modal-header h2 {
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.propuesta-3 .empty-state i {
+    color: var(--text-light);
+}
+
+/* =====================================================
+   PROPUESTA 4: "SAG CORPORATIVO"
+   - Azul institucional + Verde SAG
+   - Diseño empresarial
+   - Máxima legibilidad
+   ===================================================== */
+
+:root.propuesta-4 {
+    --sag-verde: #009639;
+    --sag-lima: #8BC53F;
+    --gob-azul: #1E3A6E;
+    --gob-azul-claro: #2E5A9E;
+    --rojo-sag: #E73039;
+    
+    --primary-color: #1E3A6E;
+    --primary-hover: #152A52;
+    --accent-color: #009639;
+    
+    --bg-page: #F8FAFC;
+    --bg-card: #FFFFFF;
+    
+    --header-bg: linear-gradient(135deg, #1E3A6E 0%, #2E5A9E 100%);
+    
+    --text-main: #1E293B;
+    --text-muted: #64748B;
+    
+    --border-color: #CBD5E1;
+    
+    --radius-md: 6px;
+    --radius-lg: 10px;
+    --radius-xl: 14px;
+    
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.1);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+.propuesta-4 body {
+    background: var(--bg-page);
+}
+
+.propuesta-4 .header {
+    background: var(--header-bg);
+    position: relative;
+}
+
+.propuesta-4 .header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #009639 0%, #8BC53F 50%, #E73039 100%);
+}
+
+.propuesta-4 .logo i {
+    color: #FFFFFF;
+}
+
+.propuesta-4 .logo h1 {
+    font-weight: 600;
+}
+
+.propuesta-4 .subtitle {
+    color: #93C5FD !important;
+}
+
+.propuesta-4 .stat-card {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.propuesta-4 .stat-card.stat-entregado {
+    border-color: rgba(147, 197, 253, 0.5);
+    background: rgba(147, 197, 253, 0.15);
+}
+
+.propuesta-4 .stat-card.stat-vendido {
+    border-color: rgba(203, 213, 225, 0.5);
+    background: rgba(203, 213, 225, 0.15);
+}
+
+.propuesta-4 .nav-tabs {
+    background: #FFFFFF;
+    box-shadow: var(--shadow-sm);
+    padding: 0.5rem;
+    border-radius: var(--radius-md);
+    margin-top: 1rem;
+}
+
+.propuesta-4 .tab-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 1rem;
+    font-weight: 600;
+}
+
+.propuesta-4 .tab-btn:hover {
+    background: var(--bg-page);
+}
+
+.propuesta-4 .tab-btn.active {
+    background: var(--primary-color);
+    color: #FFFFFF;
+    box-shadow: var(--shadow-sm);
+}
+
+.propuesta-4 .card {
+    border-top: 3px solid var(--primary-color);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.propuesta-4 .card h2 {
+    color: var(--primary-color);
+    font-weight: 700;
+}
+
+.propuesta-4 .btn-primary {
+    background: var(--primary-color);
+    border: none;
+    font-weight: 600;
+}
+
+.propuesta-4 .btn-primary:hover {
+    background: var(--primary-hover);
+    box-shadow: var(--shadow-md);
+}
+
+.propuesta-4 .btn-entregar {
+    color: var(--accent-color);
+    border-color: var(--accent-color);
+}
+
+.propuesta-4 .btn-entregar:hover {
+    background: var(--accent-color);
+    color: #FFFFFF;
+}
+
+.propuesta-4 .btn-vender {
+    color: var(--text-muted);
+    border-color: var(--border-color);
+}
+
+.propuesta-4 .form-group input {
+    border-radius: var(--radius-md);
+    border: 2px solid var(--border-color);
+}
+
+.propuesta-4 .form-group input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(30, 58, 110, 0.1);
+}
+
+.propuesta-4 .form-summary {
+    background: #EFF6FF;
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+}
+
+.propuesta-4 thead th {
+    background: var(--primary-color);
+    color: #FFFFFF;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+}
+
+.propuesta-4 tbody tr:hover {
+    background: #F1F5F9;
+}
+
+.propuesta-4 .status-select.stock {
+    background: #DCFCE7;
+    color: #15803D;
+}
+
+.propuesta-4 .status-select.entregado {
+    background: #DBEAFE;
+    color: #1D4ED8;
+}
+
+.propuesta-4 .status-select.vendido {
+    background: #F1F5F9;
+    color: #475569;
+}
+
+.propuesta-4 .status-select.baja {
+    background: #FEE2E2;
+    color: #DC2626;
+}
+
+.propuesta-4 .modal-content {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    border-top: 4px solid var(--primary-color);
+}
+
+.propuesta-4 .modal-header {
+    background: var(--primary-color);
+    color: #FFFFFF;
+}
+
+/* =====================================================
+   UTILIDADES - TODAS LAS PROPUESTAS
+   ===================================================== */
+
+/* Animaciones suaves */
+.btn, .card, .stat-card, .tab-btn {
+    transition: all 0.2s ease;
+}
+
+/* Focus visible para accesibilidad */
+*:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+}
+
+/* Scrollbar personalizado */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #F1F5F9;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #CBD5E1;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94A3B8;
+}
+
+/* =====================================================
+   RESPONSIVE - TODAS LAS PROPUESTAS
+   ===================================================== */
+
+@media (max-width: 768px) {
+    .header-content {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .logo {
+        justify-content: center;
+    }
+    
+    .stats {
+        justify-content: center;
+    }
+    
+    .nav-tabs {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .tab-btn {
+        font-size: 0.8rem;
+        padding: 0.5rem 0.75rem;
+    }
+    
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =====================================================
+   INSTRUCCIONES DE USO
+   ===================================================== 
+   
+   Para aplicar cada propuesta, agrega la clase al body:
+   
+   Propuesta 1 (SAG Institucional):
+   <body class="propuesta-1">
+   
+   Propuesta 2 (SAG Moderno):
+   <body class="propuesta-2">
+   
+   Propuesta 3 (SAG Minimalista):
+   <body class="propuesta-3">
+   
+   Propuesta 4 (SAG Corporativo):
+   <body class="propuesta-4">
+   
+   ===================================================== */

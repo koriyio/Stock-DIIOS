@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Listado Completo DIIO - SAG Talca</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="propuestas-sag.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .filtro-section {
+            background: white;
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 1px solid #D1E7D6;
+        }
+        
+        .filtro-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: flex-end;
+        }
+        
+        .filtro-group {
+            flex: 1;
+            min-width: 180px;
+        }
+        
+        .filtro-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748B;
+            margin-bottom: 0.5rem;
+        }
+        
+        .filtro-group input,
+        .filtro-group select {
+            width: 100%;
+            padding: 0.65rem 0.9rem;
+            border: 1.5px solid #E2E8F0;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+        }
+        
+        .filtro-group input:focus,
+        .filtro-group select:focus {
+            outline: none;
+            border-color: #009639;
+            box-shadow: 0 0 0 3px rgba(0, 150, 57, 0.1);
+        }
+        
+        .btn-filtrar {
+            background: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-filtrar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 150, 57, 0.3);
+        }
+        
+        .tabla-container {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 150, 57, 0.1);
+            border: 1px solid #D1E7D6;
+        }
+        
+        .tabla-header {
+            background: linear-gradient(135deg, #009639 0%, #007A2E 100%);
+            color: white;
+            padding: 1.25rem 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .tabla-header h2 {
+            margin: 0;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tabla-body {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .diio-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        
+        .diio-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+        
+        .diio-table thead th {
+            background: linear-gradient(135deg, #E8F5E9 0%, #F1F8E9 100%);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 700;
+            color: #007A2E;
+            border-bottom: 2px solid #8BC53F;
+            white-space: nowrap;
+        }
+        
+        .diio-table tbody tr {
+            border-bottom: 1px solid #E2E8F0;
+            transition: background 0.2s;
+        }
+        
+        .diio-table tbody tr:hover {
+            background: #F1F8E9;
+        }
+        
+        .diio-table tbody td {
+            padding: 0.75rem 1rem;
+        }
+        
+        .diio-numero {
+            font-family: 'Courier New', monospace;
+            font-weight: 700;
+            color: #009639;
+            font-size: 0.95rem;
+        }
+        
+        .estado-badge {
+            display: inline-block;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .estado-badge.stock {
+            background: #DCFCE7;
+            color: #15803D;
+        }
+        
+        .estado-badge.vendido {
+            background: #F1F5F9;
+            color: #475569;
+        }
+        
+        .estado-badge.entregado {
+            background: #DBEAFE;
+            color: #1D4ED8;
+        }
+        
+        .estado-badge.baja {
+            background: #FEE2E2;
+            color: #DC2626;
+        }
+        
+        .rango-separator {
+            background: linear-gradient(90deg, rgba(0,150,57,0.1) 0%, rgba(0,150,57,0.2) 50%, rgba(0,150,57,0.1) 100%);
+            padding: 0.75rem 1rem;
+            font-weight: 700;
+            color: #007A2E;
+            border-top: 2px solid #8BC53F;
+            border-bottom: 2px solid #8BC53F;
+        }
+        
+        .rango-separator i {
+            margin-right: 0.5rem;
+        }
+        
+        .summary-bar {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem 1.5rem;
+            background: #F8FAFC;
+            border-bottom: 1px solid #E2E8F0;
+            flex-wrap: wrap;
+        }
+        
+        .summary-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .summary-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+        
+        .summary-dot.stock { background: #15803D; }
+        .summary-dot.vendido { background: #475569; }
+        .summary-dot.entregado { background: #1D4ED8; }
+        .summary-dot.baja { background: #DC2626; }
+        
+        .summary-count {
+            font-weight: 700;
+            color: #1E293B;
+        }
+        
+        .summary-label {
+            color: #64748B;
+            font-size: 0.85rem;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+        }
+        
+        .loading i {
+            font-size: 3rem;
+            color: #009639;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn-action {
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-action:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: #F8FAFC;
+        }
+        
+        .page-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid #E2E8F0;
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover,
+        .page-btn.active {
+            background: #009639;
+            color: white;
+            border-color: #009639;
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 3rem;
+            color: #94A3B8;
+        }
+        
+        .no-data i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+    <script src="api.js"></script>
+</head>
+<body id="app-body">
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <i class="fa-solid fa-barcode"></i>
+                <div>
+                    <h1>Listado Completo DIIO</h1>
+                    <span class="subtitle">Oficina SAG Talca - Todos los DIIOs ordenados</span>
+                </div>
+            </div>
+            <div class="header-actions">
+                <a href="index.html" class="btn-action" style="text-decoration: none;">
+                    <i class="fa-solid fa-arrow-left"></i> Volver
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Filtros -->
+        <div class="filtro-section">
+            <div class="filtro-row">
+                <div class="filtro-group">
+                    <label><i class="fa-solid fa-filter"></i> Estado</label>
+                    <select id="filtro-estado" onchange="filtrarDatos()">
+                        <option value="">Todos los estados</option>
+                        <option value="stock">En Stock</option>
+                        <option value="vendido">Vendidos</option>
+                        <option value="entregado">Entregados</option>
+                        <option value="baja">De Baja</option>
+                    </select>
+                </div>
+                <div class="filtro-group">
+                    <label><i class="fa-solid fa-hashtag"></i> DIIO Desde</label>
+                    <input type="number" id="diio-desde" placeholder="Ej: 19971901" oninput="filtrarDatos()">
+                </div>
+                <div class="filtro-group">
+                    <label><i class="fa-solid fa-hashtag"></i> DIIO Hasta</label>
+                    <input type="number" id="diio-hasta" placeholder="Ej: 19972200" oninput="filtrarDatos()">
+                </div>
+                <div class="filtro-group">
+                    <label><i class="fa-solid fa-user"></i> Destinatario / RUT</label>
+                    <input type="text" id="filtro-destinatario" placeholder="Buscar..." oninput="filtrarDatos()">
+                </div>
+                <div class="filtro-group" style="flex: 0 0 auto;">
+                    <button class="btn-filtrar" onclick="limpiarFiltros()">
+                        <i class="fa-solid fa-rotate-left"></i> Limpiar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Loading -->
+        <div class="loading" id="loading">
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            <p>Cargando listado completo de DIIOs...</p>
+        </div>
+
+        <!-- Tabla -->
+        <div class="tabla-container hidden" id="tabla-container">
+            <div class="tabla-header">
+                <h2><i class="fa-solid fa-list"></i> Listado de DIIOs</h2>
+                <div class="header-actions">
+                    <button class="btn-action" onclick="window.print()">
+                        <i class="fa-solid fa-print"></i> Imprimir
+                    </button>
+                </div>
+            </div>
+            
+            <div class="summary-bar">
+                <div class="summary-item">
+                    <span class="summary-dot stock"></span>
+                    <span class="summary-count" id="count-stock">0</span>
+                    <span class="summary-label">Stock</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-dot entregado"></span>
+                    <span class="summary-count" id="count-entregado">0</span>
+                    <span class="summary-label">Entregado</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-dot vendido"></span>
+                    <span class="summary-count" id="count-vendido">0</span>
+                    <span class="summary-label">Vendido</span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-dot baja"></span>
+                    <span class="summary-count" id="count-baja">0</span>
+                    <span class="summary-label">Baja</span>
+                </div>
+                <div class="summary-item" style="margin-left: auto;">
+                    <span class="summary-count" id="count-total">0</span>
+                    <span class="summary-label">Total DIIOs</span>
+                </div>
+            </div>
+
+            <div class="tabla-body">
+                <table class="diio-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 80px;">N° DIIO</th>
+                            <th style="width: 100px;">Estado</th>
+                            <th>Fecha</th>
+                            <th>Proveedor / Origen</th>
+                            <th>Destinatario</th>
+                            <th>RUT</th>
+                            <th>RUP</th>
+                            <th>Observaciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-body"></tbody>
+                </table>
+            </div>
+
+            <div class="pagination" id="pagination"></div>
+        </div>
+
+        <div class="no-data hidden" id="no-data">
+            <i class="fa-solid fa-inbox"></i>
+            <p>No hay datos de DIIOs cargados.</p>
+            <a href="index.html" class="btn-filtrar" style="text-decoration: none; display: inline-block; margin-top: 1rem;">
+                <i class="fa-solid fa-arrow-right-to-bracket"></i> Ir al Inventario
+            </a>
+        </div>
+    </main>
+
+    <script>
+        let todosLosDIIOs = [];
+        let diiosFiltrados = [];
+        let paginaActual = 1;
+        const registrosPorPagina = 100;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarDIIOs();
+        });
+
+        function escapeHTML(str) {
+            if (!str) return '';
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        async function cargarDIIOs() {
+            let inventario = [];
+            try {
+                inventario = await window.api.getRangos() || [];
+            } catch (e) {
+                console.error('Error al cargar datos:', e);
+            }
+            
+            if (inventario.length === 0) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('no-data').classList.remove('hidden');
+                return;
+            }
+
+            // Expandir todos los rangos a DIIOs individuales
+            todosLosDIIOs = [];
+            
+            for (const item of inventario) {
+                const inicio = item.inicio;
+                const fin = item.fin || item.inicio;
+                
+                for (let numero = inicio; numero <= fin; numero++) {
+                    todosLosDIIOs.push({
+                        numero: numero,
+                        estado: item.estado,
+                        fecha: item.fecha,
+                        proveedor: item.proveedor,
+                        destinatario: item.destinatario,
+                        rut: item.rut,
+                        rup: item.rup,
+                        observaciones: item.observaciones || ''
+                    });
+                }
+            }
+
+            // Ordenar por número DIIO
+            todosLosDIIOs.sort((a, b) => a.numero - b.numero);
+            
+            diiosFiltrados = [...todosLosDIIOs];
+            
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('tabla-container').classList.remove('hidden');
+            
+            actualizarContadores();
+            renderizarTabla();
+        }
+
+        function filtrarDatos() {
+            const estado = document.getElementById('filtro-estado').value;
+            const diioDesde = document.getElementById('diio-desde').value;
+            const diioHasta = document.getElementById('diio-hasta').value;
+            const destinatario = document.getElementById('filtro-destinatario').value.toLowerCase();
+
+            diiosFiltrados = todosLosDIIOs.filter(d => {
+                // Filtro por estado
+                if (estado && d.estado !== estado) return false;
+                
+                // Filtro por rango DIIO
+                if (diioDesde && d.numero < parseInt(diioDesde)) return false;
+                if (diioHasta && d.numero > parseInt(diioHasta)) return false;
+                
+                // Filtro por destinatario o RUT
+                if (destinatario) {
+                    const coincideDestinatario = d.destinatario && d.destinatario.toLowerCase().includes(destinatario);
+                    const coincideRUT = d.rut && d.rut.includes(destinatario);
+                    if (!coincideDestinatario && !coincideRUT) return false;
+                }
+                
+                return true;
+            });
+
+            paginaActual = 1;
+            actualizarContadores();
+            renderizarTabla();
+        }
+
+        function limpiarFiltros() {
+            document.getElementById('filtro-estado').value = '';
+            document.getElementById('diio-desde').value = '';
+            document.getElementById('diio-hasta').value = '';
+            document.getElementById('filtro-destinatario').value = '';
+            diiosFiltrados = [...todosLosDIIOs];
+            paginaActual = 1;
+            actualizarContadores();
+            renderizarTabla();
+        }
+
+        function actualizarContadores() {
+            const stock = diiosFiltrados.filter(d => d.estado === 'stock').length;
+            const entregado = diiosFiltrados.filter(d => d.estado === 'entregado').length;
+            const vendido = diiosFiltrados.filter(d => d.estado === 'vendido').length;
+            const baja = diiosFiltrados.filter(d => d.estado === 'baja').length;
+            const total = diiosFiltrados.length;
+
+            document.getElementById('count-stock').textContent = stock.toLocaleString();
+            document.getElementById('count-entregado').textContent = entregado.toLocaleString();
+            document.getElementById('count-vendido').textContent = vendido.toLocaleString();
+            document.getElementById('count-baja').textContent = baja.toLocaleString();
+            document.getElementById('count-total').textContent = total.toLocaleString();
+        }
+
+        function renderizarTabla() {
+            const tbody = document.getElementById('tabla-body');
+            const totalPaginas = Math.ceil(diiosFiltrados.length / registrosPorPagina);
+            
+            if (diiosFiltrados.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="8" style="text-align: center; padding: 2rem; color: #94A3B8;">No se encontraron DIIOs con los filtros seleccionados</td></tr>';
+                document.getElementById('pagination').innerHTML = '';
+                return;
+            }
+
+            const inicio = (paginaActual - 1) * registrosPorPagina;
+            const fin = inicio + registrosPorPagina;
+            const paginaDIIOs = diiosFiltrados.slice(inicio, fin);
+
+            let html = '';
+            let rangoActual = null;
+
+            for (const diio of paginaDIIOs) {
+                // Detectar cambio de rango (cada 100 o cambio de proveedor/estado)
+                const nuevoRango = Math.floor((diio.numero - 1) / 100) * 100 + 1;
+                
+                if (rangoActual !== nuevoRango) {
+                    if (rangoActual !== null) {
+                        // Cerrar tbody anterior
+                    }
+                    rangoActual = nuevoRango;
+                    const rangoFin = rangoActual + 99;
+                    
+                    html += `
+                        <tr class="rango-separator">
+                            <td colspan="8">
+                                <i class="fa-solid fa-layer-group"></i>
+                                Rango: ${rangoActual} - ${rangoFin}
+                            </td>
+                        </tr>
+                    `;
+                }
+
+                html += `
+                    <tr>
+                        <td class="diio-numero">${diio.numero}</td>
+                        <td><span class="estado-badge ${escapeHTML(diio.estado)}">${escapeHTML(diio.estado)}</span></td>
+                        <td>${escapeHTML(diio.fecha || '-')}</td>
+                        <td>${escapeHTML(diio.proveedor || '-')}</td>
+                        <td>${escapeHTML(diio.destinatario || '-')}</td>
+                        <td>${escapeHTML(diio.rut || '-')}</td>
+                        <td>${escapeHTML(diio.rup || '-')}</td>
+                        <td>${escapeHTML(diio.observaciones || '-')}</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = html;
+            renderizarPaginacion(totalPaginas);
+        }
+
+        function renderizarPaginacion(totalPaginas) {
+            const container = document.getElementById('pagination');
+            
+            if (totalPaginas <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+            
+            if (paginaActual > 1) {
+                html += `<button class="page-btn" onclick="irPagina(${paginaActual - 1})"><i class="fa-solid fa-chevron-left"></i></button>`;
+            }
+
+            for (let i = 1; i <= totalPaginas; i++) {
+                if (i === 1 || i === totalPaginas || (i >= paginaActual - 2 && i <= paginaActual + 2)) {
+                    html += `<button class="page-btn ${i === paginaActual ? 'active' : ''}" onclick="irPagina(${i})">${i}</button>`;
+                } else if (i === paginaActual - 3 || i === paginaActual + 3) {
+                    html += `<span style="padding: 0.5rem; color: #94A3B8;">...</span>`;
+                }
+            }
+
+            if (paginaActual < totalPaginas) {
+                html += `<button class="page-btn" onclick="irPagina(${paginaActual + 1})"><i class="fa-solid fa-chevron-right"></i></button>`;
+            }
+
+            container.innerHTML = html;
+        }
+
+        function irPagina(pagina) {
+            paginaActual = pagina;
+            renderizarTabla();
+            document.getElementById('tabla-container').scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

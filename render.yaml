@@ -1,0 +1,18 @@
+services:
+  - type: web
+    name: stock-diios
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: stock-diios-db
+          property: connectionString
+      - key: PYTHON_VERSION
+        value: 3.11.0
+
+databases:
+  - name: stock-diios-db
+    databaseName: stock_diios
+    user: stock_user
